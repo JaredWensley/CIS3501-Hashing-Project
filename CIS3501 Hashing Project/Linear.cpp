@@ -267,6 +267,7 @@ void linear::PrintOperations()
         percentNonDirectInserts = (100.0f * count.nonDirectInsertCount) / totalInserts;
     }
 
+    // THESE ARENT WORKING FOR SOME REASON
     float averageDistanceIncludingDirect = count.averageProbingDistance();
     float averageDistanceExcludingDirect = count.averageProbingDistanceExcludingDirect();
 
