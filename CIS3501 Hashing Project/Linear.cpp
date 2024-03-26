@@ -84,16 +84,18 @@ void linear::LinearHashInsert(int value)
         // This is a duplicate value found directly in its home bucket
         hashTable[index].keyCount++;
         count.duplicateValueCount++;
-        count.directInsertCount++; // Increase the count of direct inserts that are duplicates
+        count.directInsertCount++;
         return;
     }
     // If the spot is empty -->( -1 )<-- insert the new value into the hash table :)
     else if (hashTable[index].keyValue == -1) {
         // Home bucket is empty, this is a unique direct insert
-        count.directInsertCount++;
+        
         // Insertion happens here
         hashTable[index] = hashNode(value, 1);
         count.uniqueValueCount++;
+        count.directInsertCount++;
+        return;
     } 
 
 
@@ -102,7 +104,6 @@ void linear::LinearHashInsert(int value)
         
         // Calcuates the index by adding or subtracting the probedistance based on current direction(true or false)
         index = HomeBucket + (direction ? probeDistance : -probeDistance);
-
     
 
         // if the index is negative, go to the end of the hash table
@@ -136,9 +137,16 @@ void linear::LinearHashInsert(int value)
     }
     
     // If there was at least one collision then increment the nondirectinsert counter
-    if (distance > 0) {
+    if (hashTable[index].keyValue == value) {
+        hashTable[index].keyCount++;
+        count.duplicateValueCount++;
         count.nonDirectInsertCount++;
-   }
+    }
+    else {
+        hashTable[index] = hashNode(value, 1);
+        count.uniqueValueCount++;
+        count.nonDirectInsertCount++;
+    }
 
     // Keeps track of total distance probed. 
     count.totalProbingDistance = count.totalProbingDistance + distance;

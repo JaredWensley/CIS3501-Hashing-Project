@@ -19,21 +19,19 @@ const int HASH_TABLE_SIZE = 100;  // Use 1000 for the final test run
 struct HashMetrics 
 {
 	// METRICS FOR INSERTS
-	int uniqueValueCount = 0;				// DONE
-	int duplicateValueCount = 0;			// DONE
+	int uniqueValueCount = 0;			
+	int duplicateValueCount = 0;			
 
 	/*relating to collisions below*/
-	int collisionCount = 0;					//DONE
+	int collisionCount = 0;					
 
 	/*distance metrics below for collisions*/
-	int totalProbingDistance = 0;			// NO
-	int directInsertCount = 0;				// NO
-	int nonDirectInsertCount = 0;			// NO
-	int largestProbingDistance = 0;			// DONE
+	int totalProbingDistance = 0;		
+	int directInsertCount = 0;				
+	int nonDirectInsertCount = 0;			
+	int largestProbingDistance = 0;			
 	// average probing distance is a function
 	// average probing distance excluding direct is a function
-
-
 
 
 	// METRICS FOR SEARCHES
