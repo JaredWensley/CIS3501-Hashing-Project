@@ -23,7 +23,7 @@ void linear::processMethod(string method) {
     else if (method == "random")
     {
         for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
-            int tempNum = rand() % 10;
+            int tempNum = rand() % 1000;
             testNumbers.push(tempNum);
             SearchQueue.push(tempNum);
         }
@@ -79,14 +79,22 @@ void linear::LinearHashInsert(int value)
     bool direction = true;                  // true means probe to the right, false means probe to the left
     int probeDistance = 1;                  // Initializes the probing distance.
 
-    // If first index occuplied increment the collision counter
-    if (hashTable[index].keyValue != -1) {
-        count.collisionCount++;
+    // If the loop ends because a spot with the same value was found, increase the count of that key value by 1.
+    if (hashTable[index].keyValue == value) {
+        // This is a duplicate value found directly in its home bucket
+        hashTable[index].keyCount++;
+        count.duplicateValueCount++;
+        count.directInsertCount++; // Increase the count of direct inserts that are duplicates
+        return;
     }
-    // If first index is -1 then the number is directly inserted. Increment the dirctinsert counter
-    else {
+    // If the spot is empty -->( -1 )<-- insert the new value into the hash table :)
+    else if (hashTable[index].keyValue == -1) {
+        // Home bucket is empty, this is a unique direct insert
         count.directInsertCount++;
-    }
+        // Insertion happens here
+        hashTable[index] = hashNode(value, 1);
+        count.uniqueValueCount++;
+    } 
 
 
     // Loop through hash table until an empty spot is found or same value is found
@@ -134,17 +142,6 @@ void linear::LinearHashInsert(int value)
 
     // Keeps track of total distance probed. 
     count.totalProbingDistance = count.totalProbingDistance + distance;
-
-    // If the loop ends because a spot with the same value was found, increase the count of that key value by 1.
-    if (hashTable[index].keyValue == value) {
-        hashTable[index].keyCount++;
-        count.duplicateValueCount++;
-    }
-    // If the spot is empty -->( -1 )<-- insert the new value into the hash table :)
-    else {
-        hashTable[index] = hashNode{ value, 1 };
-        count.uniqueValueCount++;
-    }
 
     // If the probed distance is larger than the current largest, update the largest probing distance with the current distance
     if (distance > count.largestProbingDistance) count.largestProbingDistance = distance;
