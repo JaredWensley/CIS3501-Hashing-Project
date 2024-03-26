@@ -60,6 +60,19 @@ struct HashMetrics
 		return (searchCount == 0) ? 0 : static_cast<float>(totalComparisons) / searchCount;
 	}
 
+	void updateLargestProbingdist(int distance) {
+		if (distance > largestProbingDistance) {
+			largestProbingDistance = distance;
+		}
+	}
+
+	//Updates the largest comparison
+	void updateLargestComparisons(int comparisons) {
+		if (comparisons > largestComparisons) {
+			largestComparisons = comparisons;
+		}
+	}
+
 };
 
 struct hashNode 
@@ -91,9 +104,6 @@ class linear
 		void LinearHashInsert(int value);
 		bool searchLinear(int value, int& endindex);
 	
-	
-	//Counters ARE NOT DONE YET - STILL NEED TO DO THEM
-	//Create an array for counters and create probably formatting for counters
 };
 
 #endif

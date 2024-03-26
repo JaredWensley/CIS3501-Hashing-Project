@@ -84,7 +84,7 @@ void linear::LinearHashInsert(int value)
         // This is a duplicate value found directly in its home bucket
         hashTable[index].keyCount++;
         count.duplicateValueCount++;
-        count.directInsertCount++;
+        //count.directInsertCount++; MAYBE NO?
         return;
     }
     // If the spot is empty -->( -1 )<-- insert the new value into the hash table :)
@@ -140,7 +140,7 @@ void linear::LinearHashInsert(int value)
     if (hashTable[index].keyValue == value) {
         hashTable[index].keyCount++;
         count.duplicateValueCount++;
-        count.nonDirectInsertCount++;
+        //count.nonDirectInsertCount++; MAYBE NO?
     }
     else {
         hashTable[index] = hashNode(value, 1);
@@ -151,44 +151,67 @@ void linear::LinearHashInsert(int value)
     // Keeps track of total distance probed. 
     count.totalProbingDistance = count.totalProbingDistance + distance;
 
+    
     // If the probed distance is larger than the current largest, update the largest probing distance with the current distance
-    if (distance > count.largestProbingDistance) count.largestProbingDistance = distance;
+    count.updateLargestProbingdist(distance);
 }
 
 bool linear::searchLinear(int value, int &endindex) 
 {
     int index = hashFunction(value);
     int originalIndex = index;
-    int comparisons = 0;
+    int comparisons = 1;        // increment at first for initinal comparision
     bool direction = true;
     int probeDistance = 1;
+
+    if (hashTable[index].keyValue == value) {
+        count.directAccesses++;
+        count.searchCount++;
+        count.totalComparisons = count.totalComparisons + comparisons;
+        endindex = index;
+        count.updateLargestComparisons(comparisons);
+        return true;
+    }
+
+    // Increment indirect access since we are now going to probe
+    if (hashTable[index].keyCount != 0) {
+        count.indirectAccesses++;
+    }
+
 
         while (hashTable[index].keyCount != 0) {
             comparisons++;
             if (hashTable[index].keyValue == value) {
                 count.searchCount++;
                 count.totalComparisons = count.totalComparisons + comparisons;
+                count.updateLargestComparisons(comparisons);
                 endindex = index;
                 return true;
             }
 
             index = originalIndex + (direction ? probeDistance : -probeDistance);
-            if (index < 0) index += HASH_TABLE_SIZE;
-            if (index >= HASH_TABLE_SIZE) index -= HASH_TABLE_SIZE;
-
+            if (index < 0) {
+                index = index + HASH_TABLE_SIZE;
+            }
+            if (index >= HASH_TABLE_SIZE) {
+                index = index - HASH_TABLE_SIZE;
+            }
             if (!direction) {
                 probeDistance++;
             }
             direction = !direction;
 
             if (probeDistance > HASH_TABLE_SIZE / 2) {
+                count.searchCount++;
                 count.totalComparisons = count.totalComparisons + comparisons;
+                count.updateLargestComparisons(comparisons);
                 return false;
             }
         }
     
-
+        count.searchCount++;
         count.totalComparisons = count.totalComparisons + comparisons;
+        count.updateLargestComparisons(comparisons);
     return false;
 }
 
@@ -260,6 +283,7 @@ void linear::fileprocess(string filename) {
 void linear::PrintOperations() 
 {
     int totalInserts = count.uniqueValueCount + count.duplicateValueCount;
+    int totalaccesses = count.directAccesses + count.indirectAccesses;
 
     float percentDirectInserts = 0.0f;
     float percentNonDirectInserts = 0.0f;
@@ -275,6 +299,7 @@ void linear::PrintOperations()
     // THESE ARENT WORKING FOR SOME REASON
     float averageDistanceIncludingDirect = count.averageProbingDistance();
     float averageDistanceExcludingDirect = count.averageProbingDistanceExcludingDirect();
+    
 
     // Print formatted metrics
     cout << endl << endl;
@@ -305,12 +330,13 @@ void linear::PrintOperations()
     // Searches metrics will go here... 
     // For now, let's print placeholders
     cout << left << setw(40) << "Searches" << endl;
-    cout << left << setw(40) << "Number of searches" << setw(15) << "vvv" << endl;
-    cout << left << setw(40) << "Number of comparisons" << setw(15) << "xxx" << endl;
-    cout << left << setw(40) << "Total number of comparisons" << setw(15) << "zzz" << endl;
-    cout << left << setw(40) << "Number of direct accesses" << setw(15) << "bcd" << endl;
-    cout << left << setw(40) << "Total number of accesses" << setw(15) << "def" << endl;
-    cout << left << setw(40) << "Total number of comparisons" << setw(15) << "ghi" << endl;
-    cout << left << setw(40) << "Average number of comparisons" << setw(15) << "ijk" << endl;
-    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << "klm" << endl;
+    cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << endl;
+    cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << endl;
+   // cout << left << setw(40) << "Total number of comparisons" << setw(15) << "^^^?" << endl;
+    cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << endl;
+    cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << endl;
+    cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << endl;
+   // cout << left << setw(40) << "Total number of comparisons" << setw(15) << "???"<< endl;
+    cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << endl;
+    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << endl;
 }
