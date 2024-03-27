@@ -89,10 +89,10 @@ class linear
 	public:
 		linear();
 
-		void printHashTable();
-		void processMethod(string method);				// get file or random number
+		void printHashTable(ofstream&);
+		void processMethod(string method, ofstream&);				// get file or random number
 		void SearchItem();
-		void PrintOperations();
+		void PrintOperations(ofstream& outputfile);
 
 	private: 
 		hashNode hashTable[HASH_TABLE_SIZE];  // Linear open addressing hash table
@@ -100,8 +100,8 @@ class linear
 		queue<int> testNumbers;
 		queue<int> SearchQueue;
 		int hashFunction(int value);
-		void fileprocess(string filename);
-		void LinearHashInsert(int value);
+		void fileprocess(string filename, ofstream&);
+		void LinearHashInsert(int value, ofstream&);
 		bool searchLinear(int value, int& endindex);
 	
 };

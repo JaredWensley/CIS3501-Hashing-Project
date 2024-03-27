@@ -1,0 +1,29 @@
+
+
+Operation Counts
+-----------------------------------
+                                       Linear
+Number of key values inserted           100            
+Unique values                           93             
+Duplicate values                        7              
+
+Collisions                              
+Number of collisions                    207            
+
+Distance from "home bucket" below       
+Number of direct inserts                54        54   %
+Number of non-direct inserts            39        39   %
+
+Average distance from home              
+including direct inserts                1              
+not-including direct inserts            1              
+Largest distance                        54             
+
+Searches                                
+Number of searches                      100            
+Number of comparisons                   348            
+Number of direct accesses               59             
+Number of indirect accesses             41             
+Total number of accesses                100            
+Average number of comparisons           3.48           
+Largest number of comparisons           56             

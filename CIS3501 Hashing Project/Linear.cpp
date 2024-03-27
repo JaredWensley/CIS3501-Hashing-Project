@@ -8,17 +8,18 @@ linear::linear() {
     }
 }
 
-void linear::processMethod(string method) {
+void linear::processMethod(string method, ofstream& output) {
 
     srand(time(nullptr)); // Seed the random number generator 
 
     if (method == "file")
     {
         string file;
+        
         cout << "Enter file name excluding the .txt: ";
-        file = file + ".txt";
         getline(cin, file);
-        fileprocess(file);
+        file = file + ".txt";
+        fileprocess(file, output);
     }
     else if (method == "random")
     {
@@ -38,7 +39,7 @@ void linear::processMethod(string method) {
     while (!testNumbers.empty()) {
         int value = testNumbers.front();
         testNumbers.pop();
-        LinearHashInsert(value);
+        LinearHashInsert(value, output);
     }
 }
 
@@ -71,7 +72,7 @@ int linear::hashFunction(int value) {
 	return value % HASH_TABLE_SIZE;
 }
 
-void linear::LinearHashInsert(int value)
+void linear::LinearHashInsert(int value, ofstream& outputfile)
 {
     int index = hashFunction(value);        // Finds the initial index in the table (Home bucket for this insert)
     int HomeBucket = index;                 // variable to keep track of the home bucket
@@ -132,6 +133,7 @@ void linear::LinearHashInsert(int value)
         // if probe distance is greater than half of table size then there will be no empty spaces, the table is full
         if (probeDistance > HASH_TABLE_SIZE / 2) {
             cerr << "Unable to find an empty spot in the hash table." << endl;
+            outputfile << "Unable to find an empty spot in the hash table." << endl;
             return;
         }
     }
@@ -215,24 +217,29 @@ bool linear::searchLinear(int value, int &endindex)
     return false;
 }
 
-void linear::printHashTable() {
+void linear::printHashTable(ofstream& outputfile) {
    
     cout << "INSERTS" << endl << "-----------------------------------" << endl;
+    outputfile << "INSERTS" << endl << "-----------------------------------" << endl;
+
 
     for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
         cout << "Bucket " << i << "\t";
+        outputfile << "Bucket " << i << "\t";
 
         if (hashTable[i].keyCount > 0) { // Check if the slot in the hash table is occupied
             cout << hashTable[i].keyValue << "\t"  << "Count: " << hashTable[i].keyCount << endl;
+            outputfile << hashTable[i].keyValue << "\t" << "Count: " << hashTable[i].keyCount << endl;
         }
         else {
             cout << "NULL" << "\t" << "Count: 0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "Count: 0" << endl; // Indicate an empty slot
         }
     }
 }
 
 // Helper function to getNumberMethod
-void linear::fileprocess(string filename) {
+void linear::fileprocess(string filename, ofstream& outputfile) {
 
     ifstream insertfile(filename);	//Input file stream
     string line;					// String to hold each line of input
@@ -241,12 +248,14 @@ void linear::fileprocess(string filename) {
     // Check if the file can open
     if (!insertfile.is_open()) {
         cerr << "Error opening file: " + filename << endl;
+        outputfile << "Error opening file: " + filename << endl;
         return; // Stop the operation
     }
 
     // Check if the file is empty
     if (insertfile.peek() == ifstream::traits_type::eof()) {
         cerr << "Error: The file " + filename + " is empty, please enter a different file" << endl;
+        outputfile << "Error: The file " + filename + " is empty, please enter a different file" << endl;
         return; // Stop the operation
     }
 
@@ -262,6 +271,7 @@ void linear::fileprocess(string filename) {
         if (!(ss >> num)) {
             // If extraction fails, report an error and continue to the next line
             cerr << "Error: Non-integer data found on line " << lineNumber << " in the InsertFile " << filename << ". Skipping line." << endl;
+            outputfile << "Error: Non-integer data found on line " << lineNumber << " in the InsertFile " << filename << ". Skipping line." << endl;
             continue;
         }
 
@@ -270,6 +280,7 @@ void linear::fileprocess(string filename) {
         if (ss >> extra) {
             // If extra data is found after the integer, report an error and continue to the next line
             cerr << "Error: More than one token found on line " << lineNumber << " in the Insertfile " << filename << ". Skipping line." << endl;
+            outputfile << "Error: More than one token found on line " << lineNumber << " in the Insertfile " << filename << ". Skipping line." << endl;
             continue;
         }
 
@@ -280,7 +291,7 @@ void linear::fileprocess(string filename) {
     }
 }
 
-void linear::PrintOperations() 
+void linear::PrintOperations(ofstream& outputfile)
 {
     int totalInserts = count.uniqueValueCount + count.duplicateValueCount;
     int totalaccesses = count.directAccesses + count.indirectAccesses;
@@ -339,4 +350,45 @@ void linear::PrintOperations()
    // cout << left << setw(40) << "Total number of comparisons" << setw(15) << "???"<< endl;
     cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << endl;
     cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << endl;
+
+
+
+
+    outputfile << endl << endl;
+    outputfile << "Operation Counts" << endl;
+    outputfile << "-----------------------------------" << endl;
+    outputfile << setw(45) << "Linear" << endl;
+
+    outputfile << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << endl;
+    outputfile << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << endl;
+    outputfile << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << endl;
+
+    outputfile << endl;
+    outputfile << left << setw(40) << "Collisions" << endl;
+    outputfile << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << endl << endl;
+
+    outputfile << left << setw(40) << "Distance from \"home bucket\" below" << endl;
+    outputfile << left << setw(40) << "Number of direct inserts" << setw(10) << count.directInsertCount << setw(5) << static_cast<int>(percentDirectInserts) << "%" << endl;
+    outputfile << left << setw(40) << "Number of non-direct inserts" << setw(10) << count.nonDirectInsertCount << setw(5) << static_cast<int>(percentNonDirectInserts) << "%" << endl << endl;
+
+    outputfile << left << setw(40) << "Average distance from home" << endl;
+    outputfile << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << endl;
+    outputfile << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << endl;
+
+    outputfile << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << endl;
+
+    outputfile << endl;
+
+    // Searches metrics will go here... 
+    // For now, let's print placeholders
+    outputfile << left << setw(40) << "Searches" << endl;
+    outputfile << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << endl;
+    outputfile << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << endl;
+    // outputfile << left << setw(40) << "Total number of comparisons" << setw(15) << "^^^?" << endl;
+    outputfile << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << endl;
+    outputfile << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << endl;
+    outputfile << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << endl;
+    // outputfile << left << setw(40) << "Total number of comparisons" << setw(15) << "???"<< endl;
+    outputfile << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << endl;
+    outputfile << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << endl;
 }

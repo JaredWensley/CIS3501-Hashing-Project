@@ -1,0 +1,131 @@
+INSERTS
+-----------------------------------
+Bucket 0	900	Count: 1
+Bucket 1	899	Count: 1
+Bucket 2	502	Count: 1
+Bucket 3	403	Count: 1
+Bucket 4	804	Count: 1
+Bucket 5	309	Count: 1
+Bucket 6	911	Count: 1
+Bucket 7	308	Count: 1
+Bucket 8	108	Count: 1
+Bucket 9	810	Count: 1
+Bucket 10	210	Count: 2
+Bucket 11	811	Count: 1
+Bucket 12	412	Count: 1
+Bucket 13	11	Count: 1
+Bucket 14	314	Count: 1
+Bucket 15	215	Count: 1
+Bucket 16	413	Count: 1
+Bucket 17	717	Count: 1
+Bucket 18	214	Count: 1
+Bucket 19	317	Count: 1
+Bucket 20	615	Count: 1
+Bucket 21	21	Count: 1
+Bucket 22	620	Count: 1
+Bucket 23	623	Count: 1
+Bucket 24	824	Count: 1
+Bucket 25	825	Count: 1
+Bucket 26	225	Count: 1
+Bucket 27	529	Count: 1
+Bucket 28	928	Count: 1
+Bucket 29	630	Count: 1
+Bucket 30	130	Count: 1
+Bucket 31	131	Count: 1
+Bucket 32	832	Count: 1
+Bucket 33	433	Count: 1
+Bucket 34	633	Count: 1
+Bucket 35	734	Count: 1
+Bucket 36	736	Count: 1
+Bucket 37	236	Count: 1
+Bucket 38	438	Count: 2
+Bucket 39	328	Count: 1
+Bucket 40	844	Count: 1
+Bucket 41	443	Count: 1
+Bucket 42	842	Count: 1
+Bucket 43	243	Count: 1
+Bucket 44	544	Count: 1
+Bucket 45	645	Count: 1
+Bucket 46	646	Count: 1
+Bucket 47	747	Count: 1
+Bucket 48	449	Count: 1
+Bucket 49	749	Count: 1
+Bucket 50	150	Count: 1
+Bucket 51	948	Count: 1
+Bucket 52	49	Count: 1
+Bucket 53	549	Count: 1
+Bucket 54	552	Count: 1
+Bucket 55	NULL	Count: 0
+Bucket 56	956	Count: 1
+Bucket 57	359	Count: 1
+Bucket 58	858	Count: 1
+Bucket 59	759	Count: 1
+Bucket 60	861	Count: 1
+Bucket 61	361	Count: 1
+Bucket 62	862	Count: 1
+Bucket 63	760	Count: 1
+Bucket 64	164	Count: 1
+Bucket 65	864	Count: 1
+Bucket 66	866	Count: 1
+Bucket 67	167	Count: 1
+Bucket 68	67	Count: 1
+Bucket 69	771	Count: 1
+Bucket 70	270	Count: 1
+Bucket 71	672	Count: 1
+Bucket 72	873	Count: 1
+Bucket 73	673	Count: 1
+Bucket 74	174	Count: 1
+Bucket 75	374	Count: 1
+Bucket 76	176	Count: 1
+Bucket 77	876	Count: 1
+Bucket 78	375	Count: 1
+Bucket 79	NULL	Count: 0
+Bucket 80	580	Count: 1
+Bucket 81	380	Count: 1
+Bucket 82	117	Count: 1
+Bucket 83	790	Count: 1
+Bucket 84	884	Count: 1
+Bucket 85	384	Count: 1
+Bucket 86	486	Count: 1
+Bucket 87	685	Count: 1
+Bucket 88	88	Count: 1
+Bucket 89	390	Count: 1
+Bucket 90	292	Count: 1
+Bucket 91	291	Count: 1
+Bucket 92	391	Count: 1
+Bucket 93	93	Count: 1
+Bucket 94	394	Count: 1
+Bucket 95	994	Count: 1
+Bucket 96	396	Count: 1
+Bucket 97	197	Count: 1
+Bucket 98	698	Count: 1
+Bucket 99	599	Count: 1
+
+
+Operation Counts
+-----------------------------------
+                                       Linear
+Number of key values inserted           100            
+Unique values                           98             
+Duplicate values                        2              
+
+Collisions                              
+Number of collisions                    245            
+
+Distance from "home bucket" below       
+Number of direct inserts                53        53   %
+Number of non-direct inserts            45        45   %
+
+Average distance from home              
+including direct inserts                1              
+not-including direct inserts            1              
+Largest distance                        70             
+
+Searches                                
+Number of searches                      100            
+Number of comparisons                   390            
+Number of direct accesses               55             
+Number of indirect accesses             45             
+Total number of accesses                100            
+Average number of comparisons           3.9            
+Largest number of comparisons           72             
