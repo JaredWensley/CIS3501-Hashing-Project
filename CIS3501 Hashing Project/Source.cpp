@@ -3,9 +3,13 @@
 
 int main() {
    
-
+    string title;
     string Method;
     linear A;
+
+    cout << "Enter name of this test: ";
+    getline(cin, title);
+    cout << endl;
 
     cout << "Do you want to use a file or the random number generator for hashing values?" << endl;
     cout << "type file or random: " << endl;
@@ -22,7 +26,7 @@ int main() {
     ofstream output(outputfilename);
 
     A.processMethod(Method, output);
-    A.printHashTable(output);
+    A.printHashTable(output, title);
     A.SearchItem();
     A.PrintOperations(output);
    

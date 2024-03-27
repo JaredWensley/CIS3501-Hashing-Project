@@ -9,7 +9,7 @@ linear::linear() {
 }
 
 void linear::processMethod(string method, ofstream& output) {
-
+    bool isFull = true;
     srand(time(nullptr)); // Seed the random number generator 
 
     if (method == "file")
@@ -23,42 +23,34 @@ void linear::processMethod(string method, ofstream& output) {
     }
     else if (method == "random")
     {
-        for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+       
+        while (isFull) {
+
             int tempNum = rand() % 1000;
-            testNumbers.push(tempNum);
+            LinearHashInsert(tempNum, output, isFull);
+            if (!isFull) continue;
             SearchQueue.push(tempNum);
         }
+          
+        
     }
     else
     {
         cerr << "something is wrong in getNumberMethod";
         return;
     }
-
-    // insert into actual hashtable
-    while (!testNumbers.empty()) {
-        int value = testNumbers.front();
-        testNumbers.pop();
-        LinearHashInsert(value, output);
-    }
+   
 }
 
 void linear::SearchItem() 
 {
-    cout << "SEARCHE FOR VALUES" << endl << "-----------------------------------" << endl;
-
-
+  
     int endindex;
     while (!SearchQueue.empty()) {
         int value = SearchQueue.front();
         SearchQueue.pop();
      
-        if (searchLinear(value, endindex)) {
-            cout << "Search for: " << value << "\t" << " Found at index " << endindex << endl;
-        }
-        else {
-            cout << "Search for: " << value << "\t" << " Not Found" << endl;
-        }
+        searchLinear(value, endindex);
     }
 }
 
@@ -72,7 +64,7 @@ int linear::hashFunction(int value) {
 	return value % HASH_TABLE_SIZE;
 }
 
-void linear::LinearHashInsert(int value, ofstream& outputfile)
+void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
 {
     int index = hashFunction(value);        // Finds the initial index in the table (Home bucket for this insert)
     int HomeBucket = index;                 // variable to keep track of the home bucket
@@ -80,12 +72,13 @@ void linear::LinearHashInsert(int value, ofstream& outputfile)
     bool direction = true;                  // true means probe to the right, false means probe to the left
     int probeDistance = 1;                  // Initializes the probing distance.
 
+
     // If the loop ends because a spot with the same value was found, increase the count of that key value by 1.
     if (hashTable[index].keyValue == value) {
         // This is a duplicate value found directly in its home bucket
         hashTable[index].keyCount++;
         count.duplicateValueCount++;
-        //count.directInsertCount++; MAYBE NO?
+        count.directInsertCount++; 
         return;
     }
     // If the spot is empty -->( -1 )<-- insert the new value into the hash table :)
@@ -132,8 +125,7 @@ void linear::LinearHashInsert(int value, ofstream& outputfile)
 
         // if probe distance is greater than half of table size then there will be no empty spaces, the table is full
         if (probeDistance > HASH_TABLE_SIZE / 2) {
-            cerr << "Unable to find an empty spot in the hash table." << endl;
-            outputfile << "Unable to find an empty spot in the hash table." << endl;
+            isFull = false;
             return;
         }
     }
@@ -142,16 +134,19 @@ void linear::LinearHashInsert(int value, ofstream& outputfile)
     if (hashTable[index].keyValue == value) {
         hashTable[index].keyCount++;
         count.duplicateValueCount++;
-        //count.nonDirectInsertCount++; MAYBE NO?
+        count.inDirectInsertCount++;
     }
     else {
         hashTable[index] = hashNode(value, 1);
         count.uniqueValueCount++;
-        count.nonDirectInsertCount++;
+        count.inDirectInsertCount++;
     }
 
     // Keeps track of total distance probed. 
     count.totalProbingDistance = count.totalProbingDistance + distance;
+
+  
+    
 
     
     // If the probed distance is larger than the current largest, update the largest probing distance with the current distance
@@ -217,26 +212,31 @@ bool linear::searchLinear(int value, int &endindex)
     return false;
 }
 
-void linear::printHashTable(ofstream& outputfile) {
+void linear::printHashTable(ofstream& outputfile, string title) {
    
-    cout << "INSERTS" << endl << "-----------------------------------" << endl;
-    outputfile << "INSERTS" << endl << "-----------------------------------" << endl;
+    cout << "\t" << "\t" << title << endl;
+    cout << "   Linear Open Addressing Hash Table" << endl;
+    cout << "-----------------------------------" << endl;
+    cout << "Index " << "\t" << "Key " << "\t" << "count " << endl;
+   
 
 
     for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
-        cout << "Bucket " << i << "\t";
-        outputfile << "Bucket " << i << "\t";
+        cout << i << "\t";
+        outputfile << i << "\t";
 
         if (hashTable[i].keyCount > 0) { // Check if the slot in the hash table is occupied
-            cout << hashTable[i].keyValue << "\t"  << "Count: " << hashTable[i].keyCount << endl;
-            outputfile << hashTable[i].keyValue << "\t" << "Count: " << hashTable[i].keyCount << endl;
+            cout << hashTable[i].keyValue << "\t" << hashTable[i].keyCount << endl;
+            outputfile << hashTable[i].keyValue << "\t" << hashTable[i].keyCount << endl;
         }
         else {
-            cout << "NULL" << "\t" << "Count: 0" << endl; // Indicate an empty slot
-            outputfile << "NULL" << "\t" << "Count: 0" << endl; // Indicate an empty slot
+            // This should never be used in an ideal run.
+            cout << "NULL" << "\t" << "0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "0" << endl; // Indicate an empty slot
         }
     }
 }
+
 
 // Helper function to getNumberMethod
 void linear::fileprocess(string filename, ofstream& outputfile) {
@@ -259,6 +259,7 @@ void linear::fileprocess(string filename, ofstream& outputfile) {
         return; // Stop the operation
     }
 
+    bool isfull = true;
     // Read from the file line by line
     while (getline(insertfile, line)) {
         lineNumber++; // Increment line number
@@ -285,8 +286,15 @@ void linear::fileprocess(string filename, ofstream& outputfile) {
         }
 
         // Put 
-        testNumbers.push(num); 
-        SearchQueue.push(num);
+        LinearHashInsert(num, outputfile, isfull);
+        if(isfull = true){
+            SearchQueue.push(num);
+        }
+        else {
+            break;
+        }
+     
+        
 
     }
 }
@@ -304,7 +312,7 @@ void linear::PrintOperations(ofstream& outputfile)
         percentDirectInserts = (100.0f * count.directInsertCount) / totalInserts;
 
         // Calculate the percentage of non-direct inserts
-        percentNonDirectInserts = (100.0f * count.nonDirectInsertCount) / totalInserts;
+        percentNonDirectInserts = (100.0f * count.inDirectInsertCount) / totalInserts;
     }
 
     // THESE ARENT WORKING FOR SOME REASON
@@ -327,8 +335,8 @@ void linear::PrintOperations(ofstream& outputfile)
     cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << endl << endl;
 
     cout << left << setw(40) << "Distance from \"home bucket\" below"  << endl;
-    cout << left << setw(40) << "Number of direct inserts" << setw(10) << count.directInsertCount << setw(5) << static_cast<int>(percentDirectInserts) << "%" << endl;
-    cout << left << setw(40) << "Number of non-direct inserts" << setw(10) << count.nonDirectInsertCount << setw(5) << static_cast<int>(percentNonDirectInserts) << "%" << endl << endl;
+    cout << left << setw(40) << "Number of direct inserts" << setw(10) << count.directInsertCount << setw(5) << setprecision(4) << (percentDirectInserts) << "%" << endl;
+    cout << left << setw(40) << "Number of non-direct inserts" << setw(10) << count.inDirectInsertCount << setw(5) << setprecision(4) << (percentNonDirectInserts) << "%" << endl << endl;
 
     cout << left << setw(40) << "Average distance from home" << endl;
     cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << endl;
@@ -338,19 +346,16 @@ void linear::PrintOperations(ofstream& outputfile)
 
     cout << endl;
 
-    // Searches metrics will go here... 
-    // For now, let's print placeholders
+   
     cout << left << setw(40) << "Searches" << endl;
     cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << endl;
     cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << endl;
-   // cout << left << setw(40) << "Total number of comparisons" << setw(15) << "^^^?" << endl;
     cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << endl;
     cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << endl;
     cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << endl;
-   // cout << left << setw(40) << "Total number of comparisons" << setw(15) << "???"<< endl;
     cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << endl;
     cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << endl;
-
+    
 
 
 
@@ -369,7 +374,7 @@ void linear::PrintOperations(ofstream& outputfile)
 
     outputfile << left << setw(40) << "Distance from \"home bucket\" below" << endl;
     outputfile << left << setw(40) << "Number of direct inserts" << setw(10) << count.directInsertCount << setw(5) << static_cast<int>(percentDirectInserts) << "%" << endl;
-    outputfile << left << setw(40) << "Number of non-direct inserts" << setw(10) << count.nonDirectInsertCount << setw(5) << static_cast<int>(percentNonDirectInserts) << "%" << endl << endl;
+    outputfile << left << setw(40) << "Number of non-direct inserts" << setw(10) << count.inDirectInsertCount << setw(5) << static_cast<int>(percentNonDirectInserts) << "%" << endl << endl;
 
     outputfile << left << setw(40) << "Average distance from home" << endl;
     outputfile << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << endl;
@@ -379,16 +384,13 @@ void linear::PrintOperations(ofstream& outputfile)
 
     outputfile << endl;
 
-    // Searches metrics will go here... 
-    // For now, let's print placeholders
+    // Search metrics
     outputfile << left << setw(40) << "Searches" << endl;
     outputfile << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << endl;
     outputfile << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << endl;
-    // outputfile << left << setw(40) << "Total number of comparisons" << setw(15) << "^^^?" << endl;
     outputfile << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << endl;
     outputfile << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << endl;
     outputfile << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << endl;
-    // outputfile << left << setw(40) << "Total number of comparisons" << setw(15) << "???"<< endl;
     outputfile << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << endl;
     outputfile << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << endl;
 }

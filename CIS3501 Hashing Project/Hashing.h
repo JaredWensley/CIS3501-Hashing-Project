@@ -28,7 +28,7 @@ struct HashMetrics
 	/*distance metrics below for collisions*/
 	int totalProbingDistance = 0;		
 	int directInsertCount = 0;				
-	int nonDirectInsertCount = 0;			
+	int inDirectInsertCount = 0;			
 	int largestProbingDistance = 0;			
 	// average probing distance is a function
 	// average probing distance excluding direct is a function
@@ -46,13 +46,14 @@ struct HashMetrics
 
 	// Methods to calculate derived metrics
 	float averageProbingDistance() const {
-		return (collisionCount == 0) ? 0 : static_cast<float>(totalProbingDistance) / collisionCount;
+		return (collisionCount == 0) ? 0 : static_cast<float>(totalProbingDistance) / (directInsertCount + inDirectInsertCount);
 	}
 
 	float averageProbingDistanceExcludingDirect() const {
-		int distanceExcludingDirect = totalProbingDistance - directInsertCount;
-		int collisionsExcludingDirect = collisionCount - directInsertCount;
-		return (collisionsExcludingDirect == 0) ? 0 : static_cast<float>(distanceExcludingDirect) / collisionsExcludingDirect;
+		//int distanceExcludingDirect = totalProbingDistance - directInsertCount;
+		//int collisionsExcludingDirect = collisionCount - directInsertCount;
+		//return (collisionsExcludingDirect == 0) ? 0 : static_cast<float>(distanceExcludingDirect) / collisionsExcludingDirect;
+		return (collisionCount == 0) ? 0 : static_cast<float>(totalProbingDistance) / directInsertCount;
 	}
 
 	// Average number of comparisions for searching. 
@@ -73,6 +74,7 @@ struct HashMetrics
 		}
 	}
 
+
 };
 
 struct hashNode 
@@ -89,7 +91,7 @@ class linear
 	public:
 		linear();
 
-		void printHashTable(ofstream&);
+		void printHashTable(ofstream&, string title);
 		void processMethod(string method, ofstream&);				// get file or random number
 		void SearchItem();
 		void PrintOperations(ofstream& outputfile);
@@ -101,8 +103,9 @@ class linear
 		queue<int> SearchQueue;
 		int hashFunction(int value);
 		void fileprocess(string filename, ofstream&);
-		void LinearHashInsert(int value, ofstream&);
+		void LinearHashInsert(int value, ofstream&, bool&);
 		bool searchLinear(int value, int& endindex);
+		
 	
 };
 
