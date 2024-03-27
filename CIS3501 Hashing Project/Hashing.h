@@ -30,8 +30,7 @@ struct HashMetrics
 	int directInsertCount = 0;				
 	int inDirectInsertCount = 0;			
 	int largestProbingDistance = 0;			
-	// average probing distance is a function
-	// average probing distance excluding direct is a function
+	
 
 
 	// METRICS FOR SEARCHES
@@ -40,8 +39,7 @@ struct HashMetrics
 	int directAccesses = 0;
 	int indirectAccesses = 0;
 	int largestComparisons = 0;
-	// average number of comparisions is a funciton
-	// total number of comparisions for indirect accesses
+	
 
 
 	// Methods to calculate derived metrics
@@ -50,9 +48,6 @@ struct HashMetrics
 	}
 
 	float averageProbingDistanceExcludingDirect() const {
-		//int distanceExcludingDirect = totalProbingDistance - directInsertCount;
-		//int collisionsExcludingDirect = collisionCount - directInsertCount;
-		//return (collisionsExcludingDirect == 0) ? 0 : static_cast<float>(distanceExcludingDirect) / collisionsExcludingDirect;
 		return (collisionCount == 0) ? 0 : static_cast<float>(totalProbingDistance) / directInsertCount;
 	}
 
@@ -81,7 +76,7 @@ struct hashNode
 {
 	int keyValue;
 	int keyCount;
-
+	int chainindex; 
 	hashNode() : keyValue(-1), keyCount(0) {}
 	hashNode(int key, int count) : keyValue(key), keyCount(count) {}
 };
@@ -104,6 +99,7 @@ class linear
 		int hashFunction(int value);
 		void fileprocess(string filename, ofstream&);
 		void LinearHashInsert(int value, ofstream&, bool&);
+		void overflowHashInsert();
 		bool searchLinear(int value, int& endindex);
 		
 	

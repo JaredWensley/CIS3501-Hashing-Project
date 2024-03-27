@@ -9,7 +9,9 @@ linear::linear() {
 }
 
 void linear::processMethod(string method, ofstream& output) {
-    bool isFull = true;
+    bool linearisFull = true;
+    bool overflowisFull = true;
+    
     srand(time(nullptr)); // Seed the random number generator 
 
     if (method == "file")
@@ -24,11 +26,20 @@ void linear::processMethod(string method, ofstream& output) {
     else if (method == "random")
     {
        
-        while (isFull) {
+        while (linearisFull || overflowisFull) {
 
             int tempNum = rand() % 1000;
-            LinearHashInsert(tempNum, output, isFull);
-            if (!isFull) continue;
+            if (linearisFull) {
+                LinearHashInsert(tempNum, output, linearisFull);
+            }
+            else if (!linearisFull) continue;
+
+            if (overflowisFull) {
+                overflowHashInsert();
+            }
+            else if (!overflowisFull) continue;
+
+
             SearchQueue.push(tempNum);
         }
           
@@ -286,14 +297,17 @@ void linear::fileprocess(string filename, ofstream& outputfile) {
         }
 
         // Put 
+
         LinearHashInsert(num, outputfile, isfull);
-        if(isfull = true){
+       // overflowHashInsert();
+        if(isfull){
             SearchQueue.push(num);
         }
         else {
             break;
         }
      
+
         
 
     }
