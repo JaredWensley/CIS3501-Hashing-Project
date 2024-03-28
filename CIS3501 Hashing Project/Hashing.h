@@ -77,8 +77,12 @@ struct hashNode
 	int keyValue;
 	int keyCount;
 	int chainindex; 
-	hashNode() : keyValue(-1), keyCount(0) {}
-	hashNode(int key, int count) : keyValue(key), keyCount(count) {}
+	hashNode() : keyValue(-1), keyCount(0), chainindex(-1) {}
+	hashNode(int key, int count, int nextIndex) : keyValue(key), keyCount(count), chainindex(nextIndex) {}
+
+
+	//chainHashNode() : keyValue()
+	//chainHashNode(int key, int index, int count) : keyValue(key), keyIndex(index), keyCount(count){}
 };
 
 class linear 
@@ -99,8 +103,8 @@ class linear
 		int hashFunction(int value);
 		void fileprocess(string filename, ofstream&);
 		void LinearHashInsert(int value, ofstream&, bool&);
-		void overflowHashInsert();
-		bool searchLinear(int value, int& endindex);
+		void overflowInsert();
+		bool searchLinear(int value);
 		
 	
 };

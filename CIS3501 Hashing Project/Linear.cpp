@@ -35,7 +35,7 @@ void linear::processMethod(string method, ofstream& output) {
             else if (!linearisFull) continue;
 
             if (overflowisFull) {
-                overflowHashInsert();
+                overflowInsert();
             }
             else if (!overflowisFull) continue;
 
@@ -61,7 +61,7 @@ void linear::SearchItem()
         int value = SearchQueue.front();
         SearchQueue.pop();
      
-        searchLinear(value, endindex);
+        searchLinear(value);
     }
 }
 
@@ -97,7 +97,7 @@ void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
         // Home bucket is empty, this is a unique direct insert
         
         // Insertion happens here
-        hashTable[index] = hashNode(value, 1);
+        hashTable[index] = hashNode(value, 1, -1);
         count.uniqueValueCount++;
         count.directInsertCount++;
         return;
@@ -148,7 +148,7 @@ void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
         count.inDirectInsertCount++;
     }
     else {
-        hashTable[index] = hashNode(value, 1);
+        hashTable[index] = hashNode(value, 1, -1);
         count.uniqueValueCount++;
         count.inDirectInsertCount++;
     }
@@ -164,7 +164,7 @@ void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
     count.updateLargestProbingdist(distance);
 }
 
-bool linear::searchLinear(int value, int &endindex) 
+bool linear::searchLinear(int value) 
 {
     int index = hashFunction(value);
     int originalIndex = index;
@@ -176,14 +176,8 @@ bool linear::searchLinear(int value, int &endindex)
         count.directAccesses++;
         count.searchCount++;
         count.totalComparisons = count.totalComparisons + comparisons;
-        endindex = index;
         count.updateLargestComparisons(comparisons);
         return true;
-    }
-
-    // Increment indirect access since we are now going to probe
-    if (hashTable[index].keyCount != 0) {
-        count.indirectAccesses++;
     }
 
 
@@ -193,7 +187,7 @@ bool linear::searchLinear(int value, int &endindex)
                 count.searchCount++;
                 count.totalComparisons = count.totalComparisons + comparisons;
                 count.updateLargestComparisons(comparisons);
-                endindex = index;
+                count.indirectAccesses++;
                 return true;
             }
 
