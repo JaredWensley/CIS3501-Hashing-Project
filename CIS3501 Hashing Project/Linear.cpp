@@ -353,8 +353,8 @@ void linear::printHashTables(ofstream& outputfile, string title) {
         outputfile << i << "\t" << "\t";
 
         if (ChainPrimary[i].keyCount > 0) { // Check if the slot in the hash table is occupied
-            cout << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << endl;
-            outputfile << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << endl;
+            cout << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << "\t" << ChainPrimary[i].nextIndex << endl;
+            outputfile << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << "\t" << ChainPrimary[i].nextIndex << endl;
         }
         else {
             // This should never be used in an ideal run.
@@ -375,8 +375,8 @@ void linear::printHashTables(ofstream& outputfile, string title) {
         outputfile << i << "\t" << "\t";
 
         if (OverFlow[i].keyCount > 0) { // Check if the slot in the hash table is occupied
-            cout << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << endl;
-            outputfile << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << endl;
+            cout << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << "\t" << OverFlow[i].nextIndex << endl;
+            outputfile << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << "\t" << OverFlow[i].nextIndex << endl;
         }
         else {
             // This should never be used in an ideal run.
@@ -437,6 +437,7 @@ void linear::fileprocess(string filename, ofstream& outputfile) {
         // Put 
 
         LinearHashInsert(num, outputfile, isfull);
+        overflowinsert(num, isfull);
        // overflowHashInsert();
         if(isfull){
             SearchQueue.push(num);
@@ -481,15 +482,15 @@ void linear::PrintOperations(ofstream& outputfile)
     cout << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
 
     cout << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << "12" << endl;
-    cout << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << count.OVuniqueValueCount << endl;
     cout << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << "12" << endl;
 
     cout << endl;
     cout << left << setw(40) << "Collisions" << endl;
     cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << "12" << endl << endl;
 
-    cout << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(4) << (percentDirectInserts) << "%    " << setw(13) << "12" << endl;
-    cout << left << setw(40) << "Number of non-direct inserts"  << count.inDirectInsertCount << " - " << setprecision(4) << (percentNonDirectInserts) << "%    " << setw(13) << "12" << endl << endl;
+    cout << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(4) << (percentDirectInserts) << setw(9) << "% "  << "12" << endl;
+    cout << left << setw(40) << "Number of non-direct inserts"  << count.inDirectInsertCount << " - " << setprecision(4) << (percentNonDirectInserts) << setw(9) << "% "  << "12" << endl << endl;
 
     cout << left << setw(40) << "Average distance from home" << endl;
     cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << "12" << endl;
