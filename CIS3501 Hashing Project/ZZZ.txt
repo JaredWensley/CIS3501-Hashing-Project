@@ -1,33 +1,33 @@
-0		74		1
+0		60		1
 1		81		1
 2		72		1
-3		92		1
-4		62		1
-5		5		1
-6		7		1
-7		88		1
-8		28		1
+3		33		1
+4		84		1
+5		69		1
+6		6		1
+7		70		1
+8		41		1
 9		9		1
-0		70		1	-1
-1		81		1	-1
-2		72		1	1
-3		NULL		0
-4		74		1	7
-5		5		1	8
-6		NULL		0
-7		7		1	6
-8		28		1	0
-9		9		1	5
-0		88		1	-1
-1		92		1	2
-2		62		1	3
-3		2		1	4
-4		22		1	-1
-5		69		1	-1
-6		97		1	-1
-7		44		1	-1
-8		95		1	9
-9		75		1	-1
+0		60		1	1
+1		81		1	0
+2		72		1	7
+3		33		1	4
+4		84		1	-1
+5		NULL		0
+6		6		1	5
+7		7		1	9
+8		48		1	3
+9		9		1	2
+0		41		1	-1
+1		70		1	-1
+2		69		2	6
+3		88		1	-1
+4		83		1	-1
+5		36		1	-1
+6		99		1	-1
+7		52		1	8
+8		22		1	-1
+9		77		1	-1
 
 
 Operation Counts
@@ -38,22 +38,22 @@ Unique values                           10
 Duplicate values                        0              
 
 Collisions                              
-Number of collisions                    26             
+Number of collisions                    30             
 
 Distance from "home bucket" below       
-Number of direct inserts                5         50   %
-Number of non-direct inserts            5         50   %
+Number of direct inserts                7         70   %
+Number of non-direct inserts            3         30   %
 
 Average distance from home              
-including direct inserts                1.6            
-not-including direct inserts            3.2            
+including direct inserts                2              
+not-including direct inserts            2.85714        
 Largest distance                        8              
 
 Searches                                
-Number of searches                      19             
-Number of comparisons                   130            
-Number of direct accesses               5              
-Number of indirect accesses             5              
-Total number of accesses                10             
-Average number of comparisons           6.84211        
+Number of searches                      21             
+Number of comparisons                   153            
+Number of direct accesses               7              
+Number of indirect accesses             4              
+Total number of accesses                11             
+Average number of comparisons           7.28571        
 Largest number of comparisons           11             

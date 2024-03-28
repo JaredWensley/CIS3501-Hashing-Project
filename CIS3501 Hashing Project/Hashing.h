@@ -86,6 +86,36 @@ struct HashMetrics
 	int OVindirectAccesses = 0;
 	int OVlargestComparisons = 0;
 
+
+	// Methods to calculate derived metrics
+	float OVaverageProbingDistance() const {
+		return (OVcollisionCount == 0) ? 0 : static_cast<float>(OVtotalProbingDistance) / (OVdirectInsertCount + OVinDirectInsertCount);
+	}
+
+	float OVaverageProbingDistanceExcludingDirect() const {
+		return (OVcollisionCount == 0) ? 0 : static_cast<float>(OVtotalProbingDistance) / OVdirectInsertCount;
+	}
+
+	// Average number of comparisions for searching. 
+	float OVaverageComparisons() const {
+		return (OVsearchCount == 0) ? 0 : static_cast<float>(OVtotalComparisons) / OVsearchCount;
+	}
+
+	void OVupdateLargestProbingdist(int distance) {
+		if (distance > OVlargestProbingDistance) {
+			OVlargestProbingDistance = distance;
+		}
+	}
+
+	//Updates the largest comparison
+	void OVupdateLargestComparisons(int comparisons) {
+		if (comparisons > OVlargestComparisons) {
+			OVlargestComparisons = comparisons;
+		}
+	}
+
+
+
 };
 
 struct hashNode 
@@ -96,9 +126,6 @@ struct hashNode
 	hashNode() : keyValue(-1), keyCount(0), nextIndex(-1) {}
 	hashNode(int key, int count, int chainindex) : keyValue(key), keyCount(count), nextIndex(chainindex) {}
 
-
-	//chainHashNode() : keyValue()
-	//chainHashNode(int key, int index, int count) : keyValue(key), keyIndex(index), keyCount(count){}
 };
 
 class linear 

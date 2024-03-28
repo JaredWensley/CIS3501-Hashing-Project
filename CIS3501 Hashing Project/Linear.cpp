@@ -167,6 +167,7 @@ void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
 void linear::overflowinsert(int value, bool& isFull) 
 {
     int index = hashFunction(value);
+    int distance = 0;
 
     // Check if the spot in the primary array is empty or a duplicate key
     if (ChainPrimary[index].keyValue == -1) {
@@ -189,6 +190,8 @@ void linear::overflowinsert(int value, bool& isFull)
         if (chainIndex == -1) {
             chainIndex = nextOpenIndex;
             count.OVcollisionCount++;
+            distance++;
+
         }
         int lastChainIndex = nextOpenIndex;                 // Will store the last index in the chain
 
@@ -199,6 +202,7 @@ void linear::overflowinsert(int value, bool& isFull)
                 OverFlow[chainIndex].keyCount++;
                 count.OVduplicateValueCount++;
                 count.OVinDirectInsertCount++;
+                count.OVtotalProbingDistance = count.OVtotalProbingDistance + distance;
                 return;
             }
 
@@ -206,6 +210,7 @@ void linear::overflowinsert(int value, bool& isFull)
             lastChainIndex = chainIndex;
             chainIndex = OverFlow[chainIndex].nextIndex;
             count.OVcollisionCount++;
+            distance++;
         }
 
        
@@ -215,6 +220,7 @@ void linear::overflowinsert(int value, bool& isFull)
         // triggers if the overflow array is full
         if (newOverflowIndex == -1) {
             isFull = false;
+            count.OVtotalProbingDistance = count.OVtotalProbingDistance + distance;
             return;
         }
 
@@ -234,6 +240,9 @@ void linear::overflowinsert(int value, bool& isFull)
             // Point the last chain entry's nextIndex to the new node
             OverFlow[lastChainIndex].nextIndex = newOverflowIndex;
         }
+
+        count.OVtotalProbingDistance = count.OVtotalProbingDistance + distance;
+        count.OVupdateLargestProbingdist(distance);
     }
 }
 
@@ -461,6 +470,8 @@ void linear::PrintOperations(ofstream& outputfile)
 
     float percentDirectInserts = 0.0f;
     float percentNonDirectInserts = 0.0f;
+    float OVpercentDirectInserts = 0.0f;
+    float OVpercentNonDirectInserts = 0.0f;
 
     if (totalInserts > 0) {
         // Calculate the percentage of direct inserts
@@ -470,9 +481,19 @@ void linear::PrintOperations(ofstream& outputfile)
         percentNonDirectInserts = (100.0f * count.inDirectInsertCount) / totalInserts;
     }
 
+    if (OVtotalInserts > 0) {
+        // Calculate the percentage of direct inserts
+        OVpercentDirectInserts = (100.0f * count.OVdirectInsertCount) / OVtotalInserts;
+
+        // Calculate the percentage of non-direct inserts
+        OVpercentNonDirectInserts = (100.0f * count.OVinDirectInsertCount) / OVtotalInserts;
+    }
+
     // THESE ARENT WORKING FOR SOME REASON
     float averageDistanceIncludingDirect = count.averageProbingDistance();
     float averageDistanceExcludingDirect = count.averageProbingDistanceExcludingDirect();
+    float OVaverageDistanceIncludingDirect = count.OVaverageProbingDistance();
+    float OVaverageDistanceExcludingDirect = count.OVaverageProbingDistanceExcludingDirect();
     
 
     // Print formatted metrics
@@ -481,22 +502,22 @@ void linear::PrintOperations(ofstream& outputfile)
     cout << "-----------------------------------" << endl;
     cout << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
 
-    cout << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << OVtotalInserts << endl;
     cout << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << count.OVuniqueValueCount << endl;
-    cout << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << count.OVduplicateValueCount << endl;
 
     cout << endl;
     cout << left << setw(40) << "Collisions" << endl;
-    cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << "12" << endl << endl;
+    cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << count.OVcollisionCount << endl << endl;
 
-    cout << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(4) << (percentDirectInserts) << setw(9) << "% "  << "12" << endl;
-    cout << left << setw(40) << "Number of non-direct inserts"  << count.inDirectInsertCount << " - " << setprecision(4) << (percentNonDirectInserts) << setw(9) << "% "  << "12" << endl << endl;
+    cout << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(3) << (percentDirectInserts) << setw(8) << "%"  << count.OVdirectInsertCount << " - " << OVpercentDirectInserts << "%" << endl;
+    cout << left << setw(40) << "Number of non-direct inserts"  << count.inDirectInsertCount << " - " << setprecision(3) << (percentNonDirectInserts) << setw(8) << "%"  << count.OVinDirectInsertCount << " - " << OVpercentNonDirectInserts << "%" << endl << endl;
 
     cout << left << setw(40) << "Average distance from home" << endl;
-    cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << "12" << endl;
-    cout << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << "12" << endl;
+    cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << OVaverageDistanceIncludingDirect << endl;
+    cout << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << OVaverageDistanceExcludingDirect << endl;
 
-    cout << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << count.OVlargestProbingDistance << endl;
 
     cout << endl;
 
