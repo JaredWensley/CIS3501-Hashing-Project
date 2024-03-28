@@ -26,7 +26,7 @@ int main() {
     ofstream output(outputfilename);
 
     A.processMethod(Method, output);
-    A.printHashTable(output, title);
+    A.printHashTables(output, title);
     A.SearchItem();
     A.PrintOperations(output);
    

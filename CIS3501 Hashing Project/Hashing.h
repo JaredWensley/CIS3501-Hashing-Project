@@ -14,25 +14,22 @@
 using namespace std;
 
 
-const int HASH_TABLE_SIZE = 100;  // Use 1000 for the final test run
+const int HASH_TABLE_SIZE = 10;  // Use 1000 for the final test run
 
 struct HashMetrics 
 {
+
+
 	// METRICS FOR INSERTS
 	int uniqueValueCount = 0;			
 	int duplicateValueCount = 0;			
-
 	/*relating to collisions below*/
 	int collisionCount = 0;					
-
 	/*distance metrics below for collisions*/
 	int totalProbingDistance = 0;		
 	int directInsertCount = 0;				
 	int inDirectInsertCount = 0;			
 	int largestProbingDistance = 0;			
-	
-
-
 	// METRICS FOR SEARCHES
 	int searchCount = 0;
 	int totalComparisons = 0;
@@ -70,15 +67,34 @@ struct HashMetrics
 	}
 
 
+	// overflow metrics
+
+	// METRICS FOR INSERTS
+	int OVuniqueValueCount = 0;
+	int OVduplicateValueCount = 0;
+	/*relating to collisions below*/
+	int OVcollisionCount = 0;
+	/*distance metrics below for collisions*/
+	int OVtotalProbingDistance = 0;
+	int OVdirectInsertCount = 0;
+	int OVinDirectInsertCount = 0;
+	int OVlargestProbingDistance = 0;
+	// METRICS FOR SEARCHES
+	int OVsearchCount = 0;
+	int OVtotalComparisons = 0;
+	int OVdirectAccesses = 0;
+	int OVindirectAccesses = 0;
+	int OVlargestComparisons = 0;
+
 };
 
 struct hashNode 
 {
 	int keyValue;
 	int keyCount;
-	int chainindex; 
-	hashNode() : keyValue(-1), keyCount(0), chainindex(-1) {}
-	hashNode(int key, int count, int nextIndex) : keyValue(key), keyCount(count), chainindex(nextIndex) {}
+	int nextIndex; 
+	hashNode() : keyValue(-1), keyCount(0), nextIndex(-1) {}
+	hashNode(int key, int count, int chainindex) : keyValue(key), keyCount(count), nextIndex(chainindex) {}
 
 
 	//chainHashNode() : keyValue()
@@ -90,21 +106,27 @@ class linear
 	public:
 		linear();
 
-		void printHashTable(ofstream&, string title);
+		void printHashTables(ofstream&, string title);
 		void processMethod(string method, ofstream&);				// get file or random number
 		void SearchItem();
 		void PrintOperations(ofstream& outputfile);
 
 	private: 
-		hashNode hashTable[HASH_TABLE_SIZE];  // Linear open addressing hash table
+		hashNode OverFlow[HASH_TABLE_SIZE];
+		hashNode ChainPrimary[HASH_TABLE_SIZE];
+		hashNode hashTable[HASH_TABLE_SIZE];		// Linear open addressing hash table
 		HashMetrics count;
 		queue<int> testNumbers;
 		queue<int> SearchQueue;
+		int nextOpenIndex = 0;
 		int hashFunction(int value);
 		void fileprocess(string filename, ofstream&);
 		void LinearHashInsert(int value, ofstream&, bool&);
-		void overflowInsert();
+		void overflowinsert(int value, bool& isFull);
 		bool searchLinear(int value);
+		bool searchOverflow(int value);
+
+		int findNextAvailableOverflowIndex(int& nextOpenIndex);
 		
 	
 };

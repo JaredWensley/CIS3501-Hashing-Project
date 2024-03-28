@@ -1,129 +1,59 @@
-Bucket 0	625	1
-Bucket 1	602	1
-Bucket 2	902	1
-Bucket 3	503	1
-Bucket 4	712	1
-Bucket 5	605	1
-Bucket 6	523	1
-Bucket 7	420	1
-Bucket 8	9	1
-Bucket 9	609	1
-Bucket 10	910	1
-Bucket 11	211	1
-Bucket 12	820	1
-Bucket 13	113	1
-Bucket 14	914	1
-Bucket 15	314	2
-Bucket 16	214	1
-Bucket 17	717	1
-Bucket 18	226	1
-Bucket 19	519	1
-Bucket 20	520	1
-Bucket 21	21	1
-Bucket 22	421	1
-Bucket 23	622	1
-Bucket 24	823	1
-Bucket 25	325	1
-Bucket 26	526	1
-Bucket 27	626	1
-Bucket 28	228	1
-Bucket 29	28	1
-Bucket 30	130	1
-Bucket 31	830	1
-Bucket 32	533	1
-Bucket 33	133	1
-Bucket 34	134	1
-Bucket 35	535	1
-Bucket 36	730	1
-Bucket 37	840	1
-Bucket 38	239	1
-Bucket 39	739	1
-Bucket 40	639	1
-Bucket 41	839	1
-Bucket 42	142	1
-Bucket 43	944	1
-Bucket 44	244	1
-Bucket 45	744	1
-Bucket 46	546	1
-Bucket 47	447	1
-Bucket 48	842	1
-Bucket 49	49	1
-Bucket 50	850	1
-Bucket 51	51	1
-Bucket 52	249	1
-Bucket 53	153	1
-Bucket 54	841	1
-Bucket 55	655	1
-Bucket 56	137	1
-Bucket 57	954	1
-Bucket 58	753	1
-Bucket 59	463	1
-Bucket 60	660	1
-Bucket 61	461	1
-Bucket 62	762	2
-Bucket 63	562	1
-Bucket 64	564	1
-Bucket 65	865	1
-Bucket 66	466	1
-Bucket 67	468	2
-Bucket 68	968	1
-Bucket 69	68	1
-Bucket 70	869	1
-Bucket 71	465	2
-Bucket 72	570	1
-Bucket 73	473	1
-Bucket 74	169	1
-Bucket 75	369	1
-Bucket 76	750	1
-Bucket 77	977	1
-Bucket 78	471	1
-Bucket 79	79	1
-Bucket 80	338	1
-Bucket 81	248	1
-Bucket 82	549	1
-Bucket 83	804	1
-Bucket 84	84	1
-Bucket 85	726	1
-Bucket 86	787	1
-Bucket 87	687	1
-Bucket 88	187	1
-Bucket 89	689	1
-Bucket 90	489	1
-Bucket 91	690	1
-Bucket 92	293	1
-Bucket 93	593	1
-Bucket 94	894	1
-Bucket 95	995	1
-Bucket 96	95	1
-Bucket 97	4	1
-Bucket 98	798	1
-Bucket 99	810	1
+0		50		1
+1		21		1
+2		62		1
+3		82		1
+4		4		1
+5		24		1
+6		94		1
+7		87		1
+8		84		1
+9		41		1
+0		50		1
+1		21		1
+2		62		1
+3		NULL		0
+4		4		1
+5		NULL		0
+6		46		1
+7		87		1
+8		28		1
+9		89		1
+0		24		1
+1		82		1
+2		41		1
+3		94		1
+4		84		1
+5		0		1
+6		16		1
+7		37		1
+8		22		1
+9		26		1
 
 
 Operation Counts
 -----------------------------------
                                        Linear
-Number of key values inserted           104            
-Unique values                           100            
-Duplicate values                        4              
+Number of key values inserted           10             
+Unique values                           10             
+Duplicate values                        0              
 
 Collisions                              
-Number of collisions                    898            
+Number of collisions                    26             
 
 Distance from "home bucket" below       
-Number of direct inserts                47        45   %
-Number of non-direct inserts            57        54   %
+Number of direct inserts                5         50   %
+Number of non-direct inserts            5         50   %
 
 Average distance from home              
-including direct inserts                7.67308        
-not-including direct inserts            16.9787        
-Largest distance                        83             
+including direct inserts                1.6            
+not-including direct inserts            3.2            
+Largest distance                        7              
 
 Searches                                
-Number of searches                      104            
-Number of comparisons                   959            
-Number of direct accesses               47             
-Number of indirect accesses             57             
-Total number of accesses                104            
-Average number of comparisons           9.22115        
-Largest number of comparisons           85             
+Number of searches                      19             
+Number of comparisons                   130            
+Number of direct accesses               5              
+Number of indirect accesses             5              
+Total number of accesses                10             
+Average number of comparisons           6.84211        
+Largest number of comparisons           11             

@@ -28,16 +28,16 @@ void linear::processMethod(string method, ofstream& output) {
        
         while (linearisFull || overflowisFull) {
 
-            int tempNum = rand() % 1000;
+            int tempNum = rand() % 100;
             if (linearisFull) {
                 LinearHashInsert(tempNum, output, linearisFull);
             }
-            else if (!linearisFull) continue;
+            //else if (!linearisFull) continue;
 
             if (overflowisFull) {
-                overflowInsert();
+                overflowinsert(tempNum, overflowisFull);
             }
-            else if (!overflowisFull) continue;
+           // else if (!overflowisFull) continue;
 
 
             SearchQueue.push(tempNum);
@@ -164,6 +164,90 @@ void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
     count.updateLargestProbingdist(distance);
 }
 
+void linear::overflowinsert(int value, bool& isFull) 
+{
+    int index = hashFunction(value);
+
+    // Check if the spot in the primary array is empty or a duplicate key
+    if (ChainPrimary[index].keyValue == -1) {
+        // Insert key directly
+        count.OVuniqueValueCount++;
+        count.OVdirectInsertCount++;
+        ChainPrimary[index] = hashNode(value, 1, -1);
+        return;
+    }
+    else if (ChainPrimary[index].keyValue == value) {
+        // Handle duplicate key as needed (e.g., increment count)
+        count.OVdirectInsertCount++;
+        count.OVduplicateValueCount++;
+        ChainPrimary[index].keyCount++;
+        return;
+    }
+    else {
+        // Collision: Look for an empty spot starting from the chain for this bucket
+        int chainIndex = ChainPrimary[index].nextIndex;     // Start of the chain
+        if (chainIndex == -1) {
+            chainIndex = nextOpenIndex;
+            count.OVcollisionCount++;
+        }
+        int lastChainIndex = nextOpenIndex;                 // Will store the last index in the chain
+
+        // Find the next aviably spot in he 
+        while (chainIndex != -1) 
+        {   //Duplicate found
+            if (OverFlow[chainIndex].keyValue == value) {
+                OverFlow[chainIndex].keyCount++;
+                count.OVduplicateValueCount++;
+                count.OVinDirectInsertCount++;
+                return;
+            }
+
+            // iterate through the overflow array, increament collision
+            lastChainIndex = chainIndex;
+            chainIndex = OverFlow[chainIndex].nextIndex;
+            count.OVcollisionCount++;
+        }
+
+       
+        // Find a free spot in the overflow array, should be instant because newoverflowindex is the next 
+        int newOverflowIndex = findNextAvailableOverflowIndex(nextOpenIndex); 
+        
+        // triggers if the overflow array is full
+        if (newOverflowIndex == -1) {
+            isFull = false;
+            return;
+        }
+
+        // Insert new key into the overflow array
+        OverFlow[newOverflowIndex] = hashNode(value, 1, -1);
+        count.OVinDirectInsertCount++;
+        count.OVuniqueValueCount++;
+
+        // Finds the next free space starting at nextopenindex so it should be instant
+        nextOpenIndex = findNextAvailableOverflowIndex(newOverflowIndex); 
+
+        if (ChainPrimary[index].nextIndex == -1) {
+            // No previous chain entry; make the new node the start of the chain
+            ChainPrimary[index].nextIndex = newOverflowIndex;
+        }
+        else {
+            // Point the last chain entry's nextIndex to the new node
+            OverFlow[lastChainIndex].nextIndex = newOverflowIndex;
+        }
+    }
+}
+
+int linear::findNextAvailableOverflowIndex(int& nextOpenIndex) 
+{
+    for (int i = nextOpenIndex; i < HASH_TABLE_SIZE; ++i) {
+            if (OverFlow[i].keyValue == -1) {
+                return i;
+            }
+            count.OVcollisionCount++;
+    }
+    return -1; // Indicates overflow space is full
+}
+
 bool linear::searchLinear(int value) 
 {
     int index = hashFunction(value);
@@ -217,27 +301,87 @@ bool linear::searchLinear(int value)
     return false;
 }
 
-void linear::printHashTable(ofstream& outputfile, string title) {
+bool linear::searchOverflow(int value) 
+{
+    int comparisons = 1;
+    int index = hashFunction(value);
+
+    if (ChainPrimary[index].keyValue == value) {
+        count.OVdirectAccesses++;
+        count.OVtotalComparisons = count.OVtotalComparisons + comparisons;
+        return true;
+    }
+    int searchindex = ChainPrimary[index].nextIndex;
+}
+
+void linear::printHashTables(ofstream& outputfile, string title) {
    
     cout << "\t" << "\t" << title << endl;
-    cout << "   Linear Open Addressing Hash Table" << endl;
-    cout << "-----------------------------------" << endl;
-    cout << "Index " << "\t" << "Key " << "\t" << "count " << endl;
+    cout << "   Quadratic Open Addressing Hash Table" << endl;
+    cout << "-------------------------------------" << endl;
+    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
    
 
 
     for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
-        cout << i << "\t";
-        outputfile << i << "\t";
+        cout << i << "\t" << "\t";
+        outputfile << i << "\t" << "\t";
 
         if (hashTable[i].keyCount > 0) { // Check if the slot in the hash table is occupied
-            cout << hashTable[i].keyValue << "\t" << hashTable[i].keyCount << endl;
-            outputfile << hashTable[i].keyValue << "\t" << hashTable[i].keyCount << endl;
+            cout << hashTable[i].keyValue << "\t" << "\t" << hashTable[i].keyCount << endl;
+            outputfile << hashTable[i].keyValue << "\t" << "\t" << hashTable[i].keyCount << endl;
         }
         else {
             // This should never be used in an ideal run.
-            cout << "NULL" << "\t" << "0" << endl; // Indicate an empty slot
-            outputfile << "NULL" << "\t" << "0" << endl; // Indicate an empty slot
+            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+        }
+    }
+
+    cout << endl; 
+    
+    // START OF OVERFLOW HASHING 
+    cout << "\t" << "\t" << title << endl;
+    cout << "   Overflow chain Hashing" << endl;
+    cout << "-----------------------------------" << endl;
+    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
+
+
+
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        cout << i << "\t" << "\t";
+        outputfile << i << "\t" << "\t";
+
+        if (ChainPrimary[i].keyCount > 0) { // Check if the slot in the hash table is occupied
+            cout << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << endl;
+            outputfile << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << endl;
+        }
+        else {
+            // This should never be used in an ideal run.
+            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+        }
+    }
+
+    cout << "\t" << "\t" << title << endl;
+    cout << "   Overflow Array" << endl;
+    cout << "-----------------------------------" << endl;
+    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
+
+
+
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        cout << i << "\t" << "\t";
+        outputfile << i << "\t" << "\t";
+
+        if (OverFlow[i].keyCount > 0) { // Check if the slot in the hash table is occupied
+            cout << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << endl;
+            outputfile << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << endl;
+        }
+        else {
+            // This should never be used in an ideal run.
+            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
         }
     }
 }
@@ -310,7 +454,9 @@ void linear::fileprocess(string filename, ofstream& outputfile) {
 void linear::PrintOperations(ofstream& outputfile)
 {
     int totalInserts = count.uniqueValueCount + count.duplicateValueCount;
+    int OVtotalInserts = count.OVuniqueValueCount + count.duplicateValueCount;
     int totalaccesses = count.directAccesses + count.indirectAccesses;
+    int OVtotalaccesses = count.OVdirectAccesses + count.OVindirectAccesses;
 
     float percentDirectInserts = 0.0f;
     float percentNonDirectInserts = 0.0f;
@@ -332,37 +478,36 @@ void linear::PrintOperations(ofstream& outputfile)
     cout << endl << endl;
     cout << "Operation Counts" << endl;
     cout << "-----------------------------------" << endl;
-    cout << setw(45) << "Linear" << endl;
+    cout << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
 
-    cout << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << endl;
-    cout << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << endl;
-    cout << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << endl;
+    cout << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << "12" << endl;
 
     cout << endl;
     cout << left << setw(40) << "Collisions" << endl;
-    cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << endl << endl;
+    cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << "12" << endl << endl;
 
-    cout << left << setw(40) << "Distance from \"home bucket\" below"  << endl;
-    cout << left << setw(40) << "Number of direct inserts" << setw(10) << count.directInsertCount << setw(5) << setprecision(4) << (percentDirectInserts) << "%" << endl;
-    cout << left << setw(40) << "Number of non-direct inserts" << setw(10) << count.inDirectInsertCount << setw(5) << setprecision(4) << (percentNonDirectInserts) << "%" << endl << endl;
+    cout << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(4) << (percentDirectInserts) << "%    " << setw(13) << "12" << endl;
+    cout << left << setw(40) << "Number of non-direct inserts"  << count.inDirectInsertCount << " - " << setprecision(4) << (percentNonDirectInserts) << "%    " << setw(13) << "12" << endl << endl;
 
     cout << left << setw(40) << "Average distance from home" << endl;
-    cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << endl;
-    cout << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << endl;
+    cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << "12" << endl;
+    cout << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << "12" << endl;
 
-    cout << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << endl;
+    cout << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << "12" << endl;
 
     cout << endl;
 
    
     cout << left << setw(40) << "Searches" << endl;
-    cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << endl;
-    cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << endl;
-    cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << endl;
-    cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << endl;
-    cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << endl;
-    cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << endl;
-    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << endl;
+    cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << "12" << endl;
     
 
 
