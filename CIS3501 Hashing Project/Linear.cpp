@@ -2,13 +2,14 @@
 
 
 
-linear::linear() {
+TableFunctions::TableFunctions() {
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         hashTable[i] = hashNode();
     }
 }
 
-void linear::processMethod(string method, ofstream& output) {
+// performs all inserts calls for both hash tables based on the type of method, 
+void TableFunctions::processMethod(string method, ofstream& output) {
     bool linearisFull = true;
     bool overflowisFull = true;
     
@@ -32,14 +33,12 @@ void linear::processMethod(string method, ofstream& output) {
             if (linearisFull) {
                 LinearHashInsert(tempNum, output, linearisFull);
             }
-            //else if (!linearisFull) continue;
+        
 
             if (overflowisFull) {
                 overflowinsert(tempNum, overflowisFull);
             }
-           // else if (!overflowisFull) continue;
-
-
+         
             SearchQueue.push(tempNum);
         }
           
@@ -53,7 +52,8 @@ void linear::processMethod(string method, ofstream& output) {
    
 }
 
-void linear::SearchItem() 
+//Searches for an item in both tables
+void TableFunctions::SearchItem()
 {
   
     
@@ -67,17 +67,196 @@ void linear::SearchItem()
     }
 }
 
+// Prints the hashtables
+void TableFunctions::printHashTables(ofstream& outputfile, string title) {
+
+    cout << "\t" << "\t" << title << endl;
+    cout << "   Quadratic Open Addressing Hash Table" << endl;
+    cout << "-------------------------------------" << endl;
+    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
 
 
+
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        cout << i << "\t" << "\t";
+        outputfile << i << "\t" << "\t";
+
+        if (hashTable[i].keyCount > 0) { // Check if the slot in the hash table is occupied
+            cout << hashTable[i].keyValue << "\t" << "\t" << hashTable[i].keyCount << endl;
+            outputfile << hashTable[i].keyValue << "\t" << "\t" << hashTable[i].keyCount << endl;
+        }
+        else {
+            // This should never be used in an ideal run.
+            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+        }
+    }
+
+    cout << endl;
+
+    // START OF OVERFLOW HASHING 
+    cout << "\t" << "\t" << title << endl;
+    cout << "   Overflow chain Hashing" << endl;
+    cout << "-----------------------------------" << endl;
+    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
+
+
+
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        cout << i << "\t" << "\t";
+        outputfile << i << "\t" << "\t";
+
+        if (ChainPrimary[i].keyCount > 0) { // Check if the slot in the hash table is occupied
+            cout << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << "\t" << ChainPrimary[i].nextIndex << endl;
+            outputfile << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << "\t" << ChainPrimary[i].nextIndex << endl;
+        }
+        else {
+            // This should never be used in an ideal run.
+            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+        }
+    }
+
+    cout << "\t" << "\t" << title << endl;
+    cout << "   Overflow Array" << endl;
+    cout << "-----------------------------------" << endl;
+    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
+
+
+
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        cout << i << "\t" << "\t";
+        outputfile << i << "\t" << "\t";
+
+        if (OverFlow[i].keyCount > 0) { // Check if the slot in the hash table is occupied
+            cout << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << "\t" << OverFlow[i].nextIndex << endl;
+            outputfile << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << "\t" << OverFlow[i].nextIndex << endl;
+        }
+        else {
+            // This should never be used in an ideal run.
+            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
+        }
+    }
+}
+
+//Prints metrics and operations for both hashtables
+void TableFunctions::PrintOperations(ofstream& outputfile)
+{
+    int totalInserts = count.uniqueValueCount + count.duplicateValueCount;
+    int OVtotalInserts = count.OVuniqueValueCount + count.duplicateValueCount;
+    int totalaccesses = count.directAccesses + count.indirectAccesses;
+    int OVtotalaccesses = count.OVdirectAccesses + count.OVindirectAccesses;
+
+    float percentDirectInserts = 0.0f;
+    float percentNonDirectInserts = 0.0f;
+    float OVpercentDirectInserts = 0.0f;
+    float OVpercentNonDirectInserts = 0.0f;
+
+    if (totalInserts > 0) {
+        // Calculate the percentage of direct inserts
+        percentDirectInserts = (100.0f * count.directInsertCount) / totalInserts;
+
+        // Calculate the percentage of non-direct inserts
+        percentNonDirectInserts = (100.0f * count.inDirectInsertCount) / totalInserts;
+    }
+
+    if (OVtotalInserts > 0) {
+        // Calculate the percentage of direct inserts
+        OVpercentDirectInserts = (100.0f * count.OVdirectInsertCount) / OVtotalInserts;
+
+        // Calculate the percentage of non-direct inserts
+        OVpercentNonDirectInserts = (100.0f * count.OVinDirectInsertCount) / OVtotalInserts;
+    }
+
+    // THESE ARENT WORKING FOR SOME REASON
+    float averageDistanceIncludingDirect = count.averageProbingDistance();
+    float averageDistanceExcludingDirect = count.averageProbingDistanceExcludingDirect();
+    float OVaverageDistanceIncludingDirect = count.OVaverageProbingDistance();
+    float OVaverageDistanceExcludingDirect = count.OVaverageProbingDistanceExcludingDirect();
+
+
+    // Print formatted metrics
+    cout << endl << endl;
+    cout << "Operation Counts" << endl;
+    cout << "-----------------------------------" << endl;
+    cout << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
+
+    cout << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << OVtotalInserts << endl;
+    cout << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << count.OVuniqueValueCount << endl;
+    cout << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << count.OVduplicateValueCount << endl;
+
+    cout << endl;
+    cout << left << setw(40) << "Collisions" << endl;
+    cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << count.OVcollisionCount << endl << endl;
+
+    cout << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(3) << (percentDirectInserts) << setw(8) << "%" << count.OVdirectInsertCount << " - " << OVpercentDirectInserts << "%" << endl;
+    cout << left << setw(40) << "Number of non-direct inserts" << count.inDirectInsertCount << " - " << setprecision(3) << (percentNonDirectInserts) << setw(8) << "%" << count.OVinDirectInsertCount << " - " << OVpercentNonDirectInserts << "%" << endl << endl;
+
+    cout << left << setw(40) << "Average distance from home" << endl;
+    cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << OVaverageDistanceIncludingDirect << endl;
+    cout << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << OVaverageDistanceExcludingDirect << endl;
+
+    cout << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << count.OVlargestProbingDistance << endl;
+
+    cout << endl;
+
+
+    cout << left << setw(40) << "Searches" << endl;
+    cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << count.OVsearchCount << endl;
+    cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << count.OVtotalComparisons << endl;
+    cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << count.OVdirectAccesses << endl;
+    cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << count.OVindirectAccesses << endl;
+    cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << OVtotalaccesses << endl;
+    cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << count.OVaverageComparisons() << endl;
+    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << count.OVlargestComparisons << endl;
+
+
+
+    outputfile << endl << endl;
+    outputfile << "Operation Counts" << endl;
+    outputfile << "-----------------------------------" << endl;
+    outputfile << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
+
+    outputfile << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << OVtotalInserts << endl;
+    outputfile << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << count.OVuniqueValueCount << endl;
+    outputfile << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << count.OVduplicateValueCount << endl;
+
+    outputfile << endl;
+    outputfile << left << setw(40) << "Collisions" << endl;
+    outputfile << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << count.OVcollisionCount << endl << endl;
+
+    outputfile << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(3) << (percentDirectInserts) << setw(8) << "%" << count.OVdirectInsertCount << " - " << OVpercentDirectInserts << "%" << endl;
+    outputfile << left << setw(40) << "Number of non-direct inserts" << count.inDirectInsertCount << " - " << setprecision(3) << (percentNonDirectInserts) << setw(8) << "%" << count.OVinDirectInsertCount << " - " << OVpercentNonDirectInserts << "%" << endl << endl;
+
+    outputfile << left << setw(40) << "Average distance from home" << endl;
+    outputfile << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << OVaverageDistanceIncludingDirect << endl;
+    outputfile << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << OVaverageDistanceExcludingDirect << endl;
+
+    outputfile << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << count.OVlargestProbingDistance << endl;
+
+    outputfile << endl;
+
+
+    outputfile << left << setw(40) << "Searches" << endl;
+    outputfile << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << count.OVsearchCount << endl;
+    outputfile << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << count.OVtotalComparisons << endl;
+    outputfile << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << count.OVdirectAccesses << endl;
+    outputfile << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << count.OVindirectAccesses << endl;
+    outputfile << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << OVtotalaccesses << endl;
+    outputfile << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << count.OVaverageComparisons() << endl;
+    outputfile << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << count.OVlargestComparisons << endl;
+}
 
 // HELPER FUNCTIONS------------------------------------------
 
 // Finds the Homebucket using a mod function
-int linear::hashFunction(int value) {
+int TableFunctions::hashFunction(int value) {
 	return value % HASH_TABLE_SIZE;
 }
 
-void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
+// Inserts items into the linear open addressing hashtable techincally a quadratic open addresssing hashtable 
+void TableFunctions::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
 {
     int index = hashFunction(value);        // Finds the initial index in the table (Home bucket for this insert)
     int HomeBucket = index;                 // variable to keep track of the home bucket
@@ -166,7 +345,8 @@ void linear::LinearHashInsert(int value, ofstream& outputfile, bool& isFull)
     count.updateLargestProbingdist(distance);
 }
 
-void linear::overflowinsert(int value, bool& isFull) 
+// inserts items into the overflow chain hashtable.
+void TableFunctions::overflowinsert(int value, bool& isFull)
 {
     int index = hashFunction(value);
     int distance = 0;
@@ -248,7 +428,8 @@ void linear::overflowinsert(int value, bool& isFull)
     }
 }
 
-int linear::findNextAvailableOverflowIndex(int& nextOpenIndex) 
+//finds the next empty index in the overflow array
+int TableFunctions::findNextAvailableOverflowIndex(int& nextOpenIndex)
 {
     for (int i = nextOpenIndex; i < HASH_TABLE_SIZE; ++i) {
             if (OverFlow[i].keyValue == -1) {
@@ -259,7 +440,8 @@ int linear::findNextAvailableOverflowIndex(int& nextOpenIndex)
     return -1; // Indicates overflow space is full
 }
 
-bool linear::searchLinear(int value) 
+// Searches through the linear hashtable for a number
+bool TableFunctions::searchLinear(int value)
 {
     int index = hashFunction(value);
     int originalIndex = index;
@@ -312,7 +494,8 @@ bool linear::searchLinear(int value)
     return false;
 }
 
-bool linear::searchOverflow(int value) 
+// Searches through the primary/overflow hashtables for a number
+bool TableFunctions::searchOverflow(int value)
 {
     int searchindex = 0;
     int comparisons = 1;
@@ -345,81 +528,8 @@ bool linear::searchOverflow(int value)
     return false;
 }
 
-void linear::printHashTables(ofstream& outputfile, string title) {
-   
-    cout << "\t" << "\t" << title << endl;
-    cout << "   Quadratic Open Addressing Hash Table" << endl;
-    cout << "-------------------------------------" << endl;
-    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
-   
-
-
-    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
-        cout << i << "\t" << "\t";
-        outputfile << i << "\t" << "\t";
-
-        if (hashTable[i].keyCount > 0) { // Check if the slot in the hash table is occupied
-            cout << hashTable[i].keyValue << "\t" << "\t" << hashTable[i].keyCount << endl;
-            outputfile << hashTable[i].keyValue << "\t" << "\t" << hashTable[i].keyCount << endl;
-        }
-        else {
-            // This should never be used in an ideal run.
-            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
-            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
-        }
-    }
-
-    cout << endl; 
-    
-    // START OF OVERFLOW HASHING 
-    cout << "\t" << "\t" << title << endl;
-    cout << "   Overflow chain Hashing" << endl;
-    cout << "-----------------------------------" << endl;
-    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
-
-
-
-    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
-        cout << i << "\t" << "\t";
-        outputfile << i << "\t" << "\t";
-
-        if (ChainPrimary[i].keyCount > 0) { // Check if the slot in the hash table is occupied
-            cout << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << "\t" << ChainPrimary[i].nextIndex << endl;
-            outputfile << ChainPrimary[i].keyValue << "\t" << "\t" << ChainPrimary[i].keyCount << "\t" << ChainPrimary[i].nextIndex << endl;
-        }
-        else {
-            // This should never be used in an ideal run.
-            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
-            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
-        }
-    }
-
-    cout << "\t" << "\t" << title << endl;
-    cout << "   Overflow Array" << endl;
-    cout << "-----------------------------------" << endl;
-    cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
-
-
-
-    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
-        cout << i << "\t" << "\t";
-        outputfile << i << "\t" << "\t";
-
-        if (OverFlow[i].keyCount > 0) { // Check if the slot in the hash table is occupied
-            cout << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << "\t" << OverFlow[i].nextIndex << endl;
-            outputfile << OverFlow[i].keyValue << "\t" << "\t" << OverFlow[i].keyCount << "\t" << OverFlow[i].nextIndex << endl;
-        }
-        else {
-            // This should never be used in an ideal run.
-            cout << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
-            outputfile << "NULL" << "\t" << "\t" << "0" << endl; // Indicate an empty slot
-        }
-    }
-}
-
-
-// Helper function to getNumberMethod
-void linear::fileprocess(string filename, ofstream& outputfile) {
+// gets the numbers from a file and inserts into hashtables
+void TableFunctions::fileprocess(string filename, ofstream& outputfile) {
 
     ifstream insertfile(filename);	//Input file stream
     string line;					// String to hold each line of input
@@ -483,109 +593,3 @@ void linear::fileprocess(string filename, ofstream& outputfile) {
     }
 }
 
-void linear::PrintOperations(ofstream& outputfile)
-{
-    int totalInserts = count.uniqueValueCount + count.duplicateValueCount;
-    int OVtotalInserts = count.OVuniqueValueCount + count.duplicateValueCount;
-    int totalaccesses = count.directAccesses + count.indirectAccesses;
-    int OVtotalaccesses = count.OVdirectAccesses + count.OVindirectAccesses;
-
-    float percentDirectInserts = 0.0f;
-    float percentNonDirectInserts = 0.0f;
-    float OVpercentDirectInserts = 0.0f;
-    float OVpercentNonDirectInserts = 0.0f;
-
-    if (totalInserts > 0) {
-        // Calculate the percentage of direct inserts
-        percentDirectInserts = (100.0f * count.directInsertCount) / totalInserts;
-
-        // Calculate the percentage of non-direct inserts
-        percentNonDirectInserts = (100.0f * count.inDirectInsertCount) / totalInserts;
-    }
-
-    if (OVtotalInserts > 0) {
-        // Calculate the percentage of direct inserts
-        OVpercentDirectInserts = (100.0f * count.OVdirectInsertCount) / OVtotalInserts;
-
-        // Calculate the percentage of non-direct inserts
-        OVpercentNonDirectInserts = (100.0f * count.OVinDirectInsertCount) / OVtotalInserts;
-    }
-
-    // THESE ARENT WORKING FOR SOME REASON
-    float averageDistanceIncludingDirect = count.averageProbingDistance();
-    float averageDistanceExcludingDirect = count.averageProbingDistanceExcludingDirect();
-    float OVaverageDistanceIncludingDirect = count.OVaverageProbingDistance();
-    float OVaverageDistanceExcludingDirect = count.OVaverageProbingDistanceExcludingDirect();
-    
-
-    // Print formatted metrics
-    cout << endl << endl;
-    cout << "Operation Counts" << endl;
-    cout << "-----------------------------------" << endl;
-    cout << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
-
-    cout << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << OVtotalInserts << endl;
-    cout << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << count.OVuniqueValueCount << endl;
-    cout << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << count.OVduplicateValueCount << endl;
-
-    cout << endl;
-    cout << left << setw(40) << "Collisions" << endl;
-    cout << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << count.OVcollisionCount << endl << endl;
-
-    cout << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(3) << (percentDirectInserts) << setw(8) << "%"  << count.OVdirectInsertCount << " - " << OVpercentDirectInserts << "%" << endl;
-    cout << left << setw(40) << "Number of non-direct inserts"  << count.inDirectInsertCount << " - " << setprecision(3) << (percentNonDirectInserts) << setw(8) << "%"  << count.OVinDirectInsertCount << " - " << OVpercentNonDirectInserts << "%" << endl << endl;
-
-    cout << left << setw(40) << "Average distance from home" << endl;
-    cout << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << OVaverageDistanceIncludingDirect << endl;
-    cout << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << OVaverageDistanceExcludingDirect << endl;
-
-    cout << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << count.OVlargestProbingDistance << endl;
-
-    cout << endl;
-
-   
-    cout << left << setw(40) << "Searches" << endl;
-    cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << count.OVsearchCount << endl;
-    cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << count.OVtotalComparisons << endl;
-    cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << count.OVdirectAccesses << endl;
-    cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << count.OVindirectAccesses << endl;
-    cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << OVtotalaccesses << endl;
-    cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << count.OVaverageComparisons()<< endl;
-    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << count.OVlargestComparisons << endl;
-    
-
-
-    outputfile << endl << endl;
-    outputfile << "Operation Counts" << endl;
-    outputfile << "-----------------------------------" << endl;
-    outputfile << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
-
-    outputfile << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << OVtotalInserts << endl;
-    outputfile << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << count.OVuniqueValueCount << endl;
-    outputfile << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << count.OVduplicateValueCount << endl;
-
-    outputfile << endl;
-    outputfile << left << setw(40) << "Collisions" << endl;
-    outputfile << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << count.OVcollisionCount << endl << endl;
-    
-    outputfile << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(3) << (percentDirectInserts) << setw(8) << "%" << count.OVdirectInsertCount << " - " << OVpercentDirectInserts << "%" << endl;
-    outputfile << left << setw(40) << "Number of non-direct inserts" << count.inDirectInsertCount << " - " << setprecision(3) << (percentNonDirectInserts) << setw(8) << "%" << count.OVinDirectInsertCount << " - " << OVpercentNonDirectInserts << "%" << endl << endl;
-
-    outputfile << left << setw(40) << "Average distance from home" << endl;
-    outputfile << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << OVaverageDistanceIncludingDirect << endl;
-    outputfile << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << OVaverageDistanceExcludingDirect << endl;
-
-    outputfile << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << count.OVlargestProbingDistance << endl;
-
-    outputfile << endl;
-
-
-    outputfile << left << setw(40) << "Searches" << endl;
-    outputfile << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << count.OVsearchCount << endl;
-    outputfile << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << count.OVtotalComparisons << endl;
-    outputfile << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << count.OVdirectAccesses << endl;
-    outputfile << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << count.OVindirectAccesses << endl;
-    outputfile << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << OVtotalaccesses << endl;
-    outputfile << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << count.OVaverageComparisons() << endl;
-    outputfile << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << count.OVlargestComparisons << endl;
-}

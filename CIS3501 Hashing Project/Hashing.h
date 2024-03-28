@@ -128,10 +128,10 @@ struct hashNode
 
 };
 
-class linear 
+class TableFunctions 
 {
 	public:
-		linear();
+		TableFunctions();
 
 		void printHashTables(ofstream&, string title);
 		void processMethod(string method, ofstream&);				// get file or random number
@@ -143,7 +143,6 @@ class linear
 		hashNode ChainPrimary[HASH_TABLE_SIZE];
 		hashNode hashTable[HASH_TABLE_SIZE];		// Linear open addressing hash table
 		HashMetrics count;
-		queue<int> testNumbers;
 		queue<int> SearchQueue;
 		int nextOpenIndex = 0;
 		int hashFunction(int value);
