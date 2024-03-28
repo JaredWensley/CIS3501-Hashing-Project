@@ -5,7 +5,7 @@ int main() {
    
     string title;
     string Method;
-    linear A;
+    TableFunctions A;
 
     cout << "Enter name of this test: ";
     getline(cin, title);

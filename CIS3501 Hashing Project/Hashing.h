@@ -14,7 +14,7 @@
 using namespace std;
 
 
-const int HASH_TABLE_SIZE = 10;  // Use 1000 for the final test run
+const int HASH_TABLE_SIZE = 100;  // Use 1000 for the final test run
 
 struct HashMetrics 
 {
