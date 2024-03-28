@@ -11,11 +11,15 @@ int main() {
     getline(cin, title);
     cout << endl;
 
-    cout << "Do you want to use a file or the random number generator for hashing values?" << endl;
-    cout << "type file or random: " << endl;
-    getline(cin, Method);
-    cout << endl;
-
+    while (Method != "file" && Method != "f" && Method != "random" && Method != "r") {
+        cout << "Do you want to use a file or the random number generator for hashing values?" << endl;
+        cout << "type file or random: " << endl;
+        getline(cin, Method);
+        cout << endl;
+        if (Method != "file" && Method != "f" && Method != "random" && Method != "r") {
+            cout << "Error input, try again. 'r' for random and 'f' for file will work too.";
+        }
+    }
 
     string outputfilename;
     cout << "Note, file can not be made if the file name contains: / \\ : ? * \" < > |" << endl;

@@ -14,7 +14,7 @@ void linear::processMethod(string method, ofstream& output) {
     
     srand(time(nullptr)); // Seed the random number generator 
 
-    if (method == "file")
+    if (method == "file" || method == "f")
     {
         string file;
         
@@ -23,7 +23,7 @@ void linear::processMethod(string method, ofstream& output) {
         file = file + ".txt";
         fileprocess(file, output);
     }
-    else if (method == "random")
+    else if (method == "random" || method == "r")
     {
        
         while (linearisFull || overflowisFull) {
@@ -56,12 +56,14 @@ void linear::processMethod(string method, ofstream& output) {
 void linear::SearchItem() 
 {
   
-    int endindex;
+    
     while (!SearchQueue.empty()) {
         int value = SearchQueue.front();
+       
         SearchQueue.pop();
      
         searchLinear(value);
+        searchOverflow(value);
     }
 }
 
@@ -312,15 +314,35 @@ bool linear::searchLinear(int value)
 
 bool linear::searchOverflow(int value) 
 {
+    int searchindex = 0;
     int comparisons = 1;
     int index = hashFunction(value);
 
     if (ChainPrimary[index].keyValue == value) {
         count.OVdirectAccesses++;
+        count.OVsearchCount++;
         count.OVtotalComparisons = count.OVtotalComparisons + comparisons;
+        count.OVupdateLargestComparisons(comparisons);
         return true;
     }
-    int searchindex = ChainPrimary[index].nextIndex;
+    searchindex = ChainPrimary[index].nextIndex;
+    while (searchindex != -1) {
+        comparisons++;
+        if (OverFlow[searchindex].keyValue == value) {
+            count.OVindirectAccesses;
+            count.OVsearchCount++;
+            count.OVtotalComparisons = count.OVtotalComparisons + comparisons;
+            count.OVupdateLargestComparisons(comparisons);
+            return true;
+        }
+        searchindex = OverFlow[searchindex].nextIndex;
+    }
+
+    // if item was not found in array, 
+    count.OVsearchCount++;
+    count.OVtotalComparisons = count.OVtotalComparisons + comparisons;
+    count.OVupdateLargestComparisons(comparisons);
+    return false;
 }
 
 void linear::printHashTables(ofstream& outputfile, string title) {
@@ -523,49 +545,47 @@ void linear::PrintOperations(ofstream& outputfile)
 
    
     cout << left << setw(40) << "Searches" << endl;
-    cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << "12" << endl;
-    cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << "12" << endl;
-    cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << "12" << endl;
-    cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << "12" << endl;
-    cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << "12" << endl;
-    cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << "12" << endl;
-    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << "12" << endl;
+    cout << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << count.OVsearchCount << endl;
+    cout << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << count.OVtotalComparisons << endl;
+    cout << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << count.OVdirectAccesses << endl;
+    cout << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << count.OVindirectAccesses << endl;
+    cout << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << OVtotalaccesses << endl;
+    cout << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << count.OVaverageComparisons()<< endl;
+    cout << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << count.OVlargestComparisons << endl;
     
-
 
 
     outputfile << endl << endl;
     outputfile << "Operation Counts" << endl;
     outputfile << "-----------------------------------" << endl;
-    outputfile << setw(45) << "Linear" << endl;
+    outputfile << setw(45) << "Linear" << setw(15) << "OverFlow" << endl;
 
-    outputfile << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << endl;
-    outputfile << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << endl;
-    outputfile << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << endl;
+    outputfile << left << setw(40) << "Number of key values inserted" << setw(15) << totalInserts << setw(10) << OVtotalInserts << endl;
+    outputfile << left << setw(40) << "Unique values" << setw(15) << count.uniqueValueCount << setw(10) << count.OVuniqueValueCount << endl;
+    outputfile << left << setw(40) << "Duplicate values" << setw(15) << count.duplicateValueCount << setw(10) << count.OVduplicateValueCount << endl;
 
     outputfile << endl;
     outputfile << left << setw(40) << "Collisions" << endl;
-    outputfile << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << endl << endl;
-
-    outputfile << left << setw(40) << "Distance from \"home bucket\" below" << endl;
-    outputfile << left << setw(40) << "Number of direct inserts" << setw(10) << count.directInsertCount << setw(5) << static_cast<int>(percentDirectInserts) << "%" << endl;
-    outputfile << left << setw(40) << "Number of non-direct inserts" << setw(10) << count.inDirectInsertCount << setw(5) << static_cast<int>(percentNonDirectInserts) << "%" << endl << endl;
+    outputfile << left << setw(40) << "Number of collisions" << setw(15) << count.collisionCount << setw(10) << count.OVcollisionCount << endl << endl;
+    
+    outputfile << left << setw(40) << "Number of direct inserts" << count.directInsertCount << " - " << setprecision(3) << (percentDirectInserts) << setw(8) << "%" << count.OVdirectInsertCount << " - " << OVpercentDirectInserts << "%" << endl;
+    outputfile << left << setw(40) << "Number of non-direct inserts" << count.inDirectInsertCount << " - " << setprecision(3) << (percentNonDirectInserts) << setw(8) << "%" << count.OVinDirectInsertCount << " - " << OVpercentNonDirectInserts << "%" << endl << endl;
 
     outputfile << left << setw(40) << "Average distance from home" << endl;
-    outputfile << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << endl;
-    outputfile << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << endl;
+    outputfile << left << setw(40) << "including direct inserts" << setw(15) << averageDistanceIncludingDirect << setw(10) << OVaverageDistanceIncludingDirect << endl;
+    outputfile << left << setw(40) << "not-including direct inserts" << setw(15) << averageDistanceExcludingDirect << setw(10) << OVaverageDistanceExcludingDirect << endl;
 
-    outputfile << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << endl;
+    outputfile << left << setw(40) << "Largest distance" << setw(15) << count.largestProbingDistance << setw(10) << count.OVlargestProbingDistance << endl;
 
     outputfile << endl;
 
-    // Search metrics
+
     outputfile << left << setw(40) << "Searches" << endl;
-    outputfile << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << endl;
-    outputfile << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << endl;
-    outputfile << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << endl;
-    outputfile << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << endl;
-    outputfile << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << endl;
-    outputfile << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << endl;
-    outputfile << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << endl;
+    outputfile << left << setw(40) << "Number of searches" << setw(15) << count.searchCount << setw(10) << count.OVsearchCount << endl;
+    outputfile << left << setw(40) << "Number of comparisons" << setw(15) << count.totalComparisons << setw(10) << count.OVtotalComparisons << endl;
+    outputfile << left << setw(40) << "Number of direct accesses" << setw(15) << count.directAccesses << setw(10) << count.OVdirectAccesses << endl;
+    outputfile << left << setw(40) << "Number of indirect accesses" << setw(15) << count.indirectAccesses << setw(10) << count.OVindirectAccesses << endl;
+    outputfile << left << setw(40) << "Total number of accesses" << setw(15) << totalaccesses << setw(10) << OVtotalaccesses << endl;
+    outputfile << left << setw(40) << "Average number of comparisons" << setw(15) << count.averageComparisons() << setw(10) << count.OVaverageComparisons() << endl;
+    outputfile << left << setw(40) << "Largest number of comparisons" << setw(15) << count.largestComparisons << setw(10) << count.OVlargestComparisons << endl;
 }
