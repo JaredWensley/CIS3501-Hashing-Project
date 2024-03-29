@@ -1,20 +1,20 @@
-		Output100in
+		Many
    Quadratic Open Addressing Hash Table
 -------------------------------------
 Index 		Key 		count 
-0		0		2
-1		1		11
-2		2		7
-3		3		15
-4		4		14
-5		5		7
-6		6		7
-7		7		9
-8		8		10
-9		9		9
-10		10		10
+0		102		1
+1		1		1
+2		2		1
+3		3		3
+4		4		1
+5		5		2
+6		6		1
+7		NULL		0
+8		8		1
+9		NULL		0
+10		NULL		0
 11		NULL		0
-12		NULL		0
+12		12		1
 13		NULL		0
 14		NULL		0
 15		NULL		0
@@ -23,32 +23,32 @@ Index 		Key 		count
 18		NULL		0
 19		NULL		0
 20		NULL		0
-21		NULL		0
-22		NULL		0
+21		2321		1
+22		22		3
 23		NULL		0
-24		NULL		0
+24		24		3
 25		NULL		0
 26		NULL		0
 27		NULL		0
-28		NULL		0
+28		28		1
 29		NULL		0
 30		NULL		0
 31		NULL		0
 32		NULL		0
 33		NULL		0
 34		NULL		0
-35		NULL		0
-36		NULL		0
+35		35		1
+36		36		1
 37		NULL		0
 38		NULL		0
 39		NULL		0
 40		NULL		0
 41		NULL		0
-42		NULL		0
+42		342		1
 43		NULL		0
-44		NULL		0
+44		44		1
 45		NULL		0
-46		NULL		0
+46		446		1
 47		NULL		0
 48		NULL		0
 49		NULL		0
@@ -56,8 +56,8 @@ Index 		Key 		count
 51		NULL		0
 52		NULL		0
 53		NULL		0
-54		NULL		0
-55		NULL		0
+54		54		1
+55		355		1
 56		NULL		0
 57		NULL		0
 58		NULL		0
@@ -76,10 +76,10 @@ Index 		Key 		count
 71		NULL		0
 72		NULL		0
 73		NULL		0
-74		NULL		0
+74		74		2
 75		NULL		0
 76		NULL		0
-77		NULL		0
+77		77		1
 78		NULL		0
 79		NULL		0
 80		NULL		0
@@ -101,25 +101,25 @@ Index 		Key 		count
 96		NULL		0
 97		NULL		0
 98		NULL		0
-99		NULL		0
+99		99		1
 
-		Output100in
+		Many
    Overflow chain Hashing
 -----------------------------------
 Index 		Key 		count 
-0		0		2	-1
-1		1		11	-1
-2		2		7	-1
-3		3		15	-1
-4		4		14	-1
-5		5		7	-1
-6		6		7	-1
-7		7		9	-1
-8		8		10	-1
-9		9		9	-1
-10		10		10	-1
+0		NULL		0
+1		1		1	-1
+2		2		1	0
+3		3		3	-1
+4		4		1	-1
+5		5		2	-1
+6		6		1	-1
+7		NULL		0
+8		8		1	-1
+9		NULL		0
+10		NULL		0
 11		NULL		0
-12		NULL		0
+12		12		1	-1
 13		NULL		0
 14		NULL		0
 15		NULL		0
@@ -128,32 +128,32 @@ Index 		Key 		count
 18		NULL		0
 19		NULL		0
 20		NULL		0
-21		NULL		0
-22		NULL		0
+21		2321		1	-1
+22		22		3	-1
 23		NULL		0
-24		NULL		0
+24		24		3	-1
 25		NULL		0
 26		NULL		0
 27		NULL		0
-28		NULL		0
+28		28		1	-1
 29		NULL		0
 30		NULL		0
 31		NULL		0
 32		NULL		0
 33		NULL		0
 34		NULL		0
-35		NULL		0
-36		NULL		0
+35		35		1	-1
+36		36		1	-1
 37		NULL		0
 38		NULL		0
 39		NULL		0
 40		NULL		0
 41		NULL		0
-42		NULL		0
+42		342		1	-1
 43		NULL		0
-44		NULL		0
+44		44		1	-1
 45		NULL		0
-46		NULL		0
+46		446		1	-1
 47		NULL		0
 48		NULL		0
 49		NULL		0
@@ -161,8 +161,8 @@ Index 		Key 		count
 51		NULL		0
 52		NULL		0
 53		NULL		0
-54		NULL		0
-55		NULL		0
+54		54		1	-1
+55		355		1	-1
 56		NULL		0
 57		NULL		0
 58		NULL		0
@@ -181,10 +181,10 @@ Index 		Key 		count
 71		NULL		0
 72		NULL		0
 73		NULL		0
-74		NULL		0
+74		74		2	-1
 75		NULL		0
 76		NULL		0
-77		NULL		0
+77		77		1	-1
 78		NULL		0
 79		NULL		0
 80		NULL		0
@@ -206,12 +206,12 @@ Index 		Key 		count
 96		NULL		0
 97		NULL		0
 98		NULL		0
-99		NULL		0
-		Output100in
+99		99		1	-1
+		Many
    Overflow Array
 -----------------------------------
 Index 		Key 		count 
-0		NULL		0
+0		102		1	-1
 1		NULL		0
 2		NULL		0
 3		NULL		0
@@ -316,26 +316,26 @@ Index 		Key 		count
 Operation Counts
 -----------------------------------
                                        Linear       OverFlow
-Number of key values inserted           101            101       
-Unique values                           11             11        
-Duplicate values                        90             90        
+Number of key values inserted           31             31        
+Unique values                           23             23        
+Duplicate values                        8              8         
 
 Collisions                              
-Number of collisions                    0              0         
+Number of collisions                    4              3         
 
-Number of direct inserts                101 - 100%       101 - 100%
-Number of non-direct inserts            0 - 0%       0 - 0%
+Number of direct inserts                30 - 96.8%       30 - 96.8%
+Number of non-direct inserts            1 - 3.23%       1 - 3.23%
 
 Average distance from home              
-including direct inserts                0              0         
-not-including direct inserts            0              0         
-Largest distance                        0              0         
+including direct inserts                0.129          0.0645    
+not-including direct inserts            0.133          0.0667    
+Largest distance                        4              2         
 
 Searches                                
-Number of searches                      101            101       
-Number of comparisons                   101            101       
-Number of direct accesses               101            101       
-Number of indirect accesses             0              0         
-Total number of accesses                101            101       
-Average number of comparisons           1              1         
-Largest number of comparisons           1              1         
+Number of searches                      31             31        
+Number of comparisons                   36             32        
+Number of direct accesses               30             30        
+Number of indirect accesses             1              0         
+Total number of accesses                31             30        
+Average number of comparisons           1.16           1.03      
+Largest number of comparisons           6              2         

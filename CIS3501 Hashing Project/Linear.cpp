@@ -29,7 +29,7 @@ void TableFunctions::processMethod(string method, ofstream& output) {
        
         while (linearisFull || overflowisFull) {
 
-            int tempNum = rand() % 100;
+            int tempNum = rand() % 9999;
             if (linearisFull) {
                 LinearHashInsert(tempNum, output, linearisFull);
             }
@@ -75,6 +75,11 @@ void TableFunctions::printHashTables(ofstream& outputfile, string title) {
     cout << "-------------------------------------" << endl;
     cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
 
+    outputfile << "\t" << "\t" << title << endl;
+    outputfile << "   Quadratic Open Addressing Hash Table" << endl;
+    outputfile << "-------------------------------------" << endl;
+    outputfile << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
+
 
 
     for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
@@ -100,6 +105,14 @@ void TableFunctions::printHashTables(ofstream& outputfile, string title) {
     cout << "-----------------------------------" << endl;
     cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
 
+    outputfile << endl;
+
+    // START OF OVERFLOW HASHING 
+    outputfile << "\t" << "\t" << title << endl;
+    outputfile << "   Overflow chain Hashing" << endl;
+    outputfile << "-----------------------------------" << endl;
+    outputfile << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
+
 
 
     for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
@@ -122,6 +135,10 @@ void TableFunctions::printHashTables(ofstream& outputfile, string title) {
     cout << "-----------------------------------" << endl;
     cout << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
 
+    outputfile << "\t" << "\t" << title << endl;
+    outputfile << "   Overflow Array" << endl;
+    outputfile << "-----------------------------------" << endl;
+    outputfile << "Index " << "\t" << "\t" << "Key " << "\t" << "\t" << "count " << endl;
 
 
     for (int i = 0; i < HASH_TABLE_SIZE; ++i) {

@@ -1,22 +1,22 @@
-		Output100in
+		IndexHandling
    Quadratic Open Addressing Hash Table
 -------------------------------------
 Index 		Key 		count 
-0		0		2
-1		1		11
-2		2		7
-3		3		15
-4		4		14
-5		5		7
-6		6		7
-7		7		9
-8		8		10
-9		9		9
-10		10		10
+0		NULL		0
+1		NULL		0
+2		2		1
+3		102		1
+4		NULL		0
+5		NULL		0
+6		NULL		0
+7		NULL		0
+8		NULL		0
+9		NULL		0
+10		NULL		0
 11		NULL		0
 12		NULL		0
 13		NULL		0
-14		NULL		0
+14		14		1
 15		NULL		0
 16		NULL		0
 17		NULL		0
@@ -65,7 +65,7 @@ Index 		Key 		count
 60		NULL		0
 61		NULL		0
 62		NULL		0
-63		NULL		0
+63		63		1
 64		NULL		0
 65		NULL		0
 66		NULL		0
@@ -79,8 +79,8 @@ Index 		Key 		count
 74		NULL		0
 75		NULL		0
 76		NULL		0
-77		NULL		0
-78		NULL		0
+77		77		1
+78		177		1
 79		NULL		0
 80		NULL		0
 81		NULL		0
@@ -103,25 +103,25 @@ Index 		Key 		count
 98		NULL		0
 99		NULL		0
 
-		Output100in
+		IndexHandling
    Overflow chain Hashing
 -----------------------------------
 Index 		Key 		count 
-0		0		2	-1
-1		1		11	-1
-2		2		7	-1
-3		3		15	-1
-4		4		14	-1
-5		5		7	-1
-6		6		7	-1
-7		7		9	-1
-8		8		10	-1
-9		9		9	-1
-10		10		10	-1
+0		NULL		0
+1		NULL		0
+2		2		1	0
+3		NULL		0
+4		NULL		0
+5		NULL		0
+6		NULL		0
+7		NULL		0
+8		NULL		0
+9		NULL		0
+10		NULL		0
 11		NULL		0
 12		NULL		0
 13		NULL		0
-14		NULL		0
+14		14		1	-1
 15		NULL		0
 16		NULL		0
 17		NULL		0
@@ -170,7 +170,7 @@ Index 		Key 		count
 60		NULL		0
 61		NULL		0
 62		NULL		0
-63		NULL		0
+63		63		1	-1
 64		NULL		0
 65		NULL		0
 66		NULL		0
@@ -184,7 +184,7 @@ Index 		Key 		count
 74		NULL		0
 75		NULL		0
 76		NULL		0
-77		NULL		0
+77		77		1	1
 78		NULL		0
 79		NULL		0
 80		NULL		0
@@ -207,12 +207,12 @@ Index 		Key 		count
 97		NULL		0
 98		NULL		0
 99		NULL		0
-		Output100in
+		IndexHandling
    Overflow Array
 -----------------------------------
 Index 		Key 		count 
-0		NULL		0
-1		NULL		0
+0		102		1	-1
+1		177		1	-1
 2		NULL		0
 3		NULL		0
 4		NULL		0
@@ -316,26 +316,26 @@ Index 		Key 		count
 Operation Counts
 -----------------------------------
                                        Linear       OverFlow
-Number of key values inserted           101            101       
-Unique values                           11             11        
-Duplicate values                        90             90        
+Number of key values inserted           6              6         
+Unique values                           6              6         
+Duplicate values                        0              0         
 
 Collisions                              
-Number of collisions                    0              0         
+Number of collisions                    2              6         
 
-Number of direct inserts                101 - 100%       101 - 100%
-Number of non-direct inserts            0 - 0%       0 - 0%
+Number of direct inserts                4 - 66.7%       4 - 66.7%
+Number of non-direct inserts            2 - 33.3%       2 - 33.3%
 
 Average distance from home              
-including direct inserts                0              0         
-not-including direct inserts            0              0         
-Largest distance                        0              0         
+including direct inserts                0.333          0.667     
+not-including direct inserts            0.5            1         
+Largest distance                        1              2         
 
 Searches                                
-Number of searches                      101            101       
-Number of comparisons                   101            101       
-Number of direct accesses               101            101       
-Number of indirect accesses             0              0         
-Total number of accesses                101            101       
-Average number of comparisons           1              1         
-Largest number of comparisons           1              1         
+Number of searches                      6              6         
+Number of comparisons                   10             8         
+Number of direct accesses               4              4         
+Number of indirect accesses             2              0         
+Total number of accesses                6              4         
+Average number of comparisons           1.67           1.33      
+Largest number of comparisons           3              2         
